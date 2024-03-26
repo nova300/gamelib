@@ -1,5 +1,25 @@
 #include "core/object.h"
 
+bool Object::Active()
+{
+    return active;
+}
+
+bool Object::Visible()
+{
+    return visible;
+}
+
+void Object::Active(bool value)
+{
+    active = value;
+}
+
+void Object::Visible(bool value)
+{
+    visible = value;
+}
+
 void Object::AwakeBehaviours()
 {
     for(auto& b : behaviours)

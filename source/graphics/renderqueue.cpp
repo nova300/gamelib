@@ -26,12 +26,14 @@ void RenderQueue::UnsetPass()
 
 void RenderQueue::Draw()
 {
+    if(camera2d != nullptr) BeginMode2D(*camera2d.get());
     for(auto val : objects)
     {
         auto [pos, obj] = val;
         obj->Render();
         obj->RenderBehaviours();
     }
+    if(camera2d != nullptr) EndMode2D();
 }
 
 void RenderQueue::RenderAll()
@@ -43,14 +45,14 @@ void RenderQueue::RenderAll()
     }
 }
 
-void RenderQueue::Add(std::shared_ptr<Object> obj, int pos)
+void RenderQueue::Add(std::shared_ptr<Object> obj, float pos)
 {
     objects.emplace(pos, obj);
 }
 
 void RenderQueue::Remove(std::shared_ptr<Object> obj)
 {
-    for(std::map<int, std::shared_ptr<Object>>::iterator it = objects.begin(); it != objects.end();)
+    for(std::map<float, std::shared_ptr<Object>>::iterator it = objects.begin(); it != objects.end();)
     {
 	    if((it->second) == obj)
 	    {

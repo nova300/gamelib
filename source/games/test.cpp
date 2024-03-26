@@ -2,6 +2,7 @@
 #include "games/test.h"
 #include "graphics/sprite.h"
 #include "core/programstack.h"
+#include "graphics/lights.h"
 
 int main(void)
 {
@@ -12,15 +13,28 @@ int main(void)
     SetTargetFPS(60);
     ProgramStack ps1;
 
-    ps1.Push(new TestProgram());
+    Lights lights(Rectangle{30.0, 20.0, 300.0, 200.0});
+
+
+    auto light1 = lights.SetupLight(300.0f, WHITE);
+
+    light1->Set(Vector2{50.0, 50.0});
+
+    auto occ1 = lights.SetupOccluder();
+
+    occ1->Set(Rectangle{100.0, 100.0, 30.0, 30.0});
+
+    //ps1.Push(new TestProgram());
 
 
     while(!WindowShouldClose())
     {
-        ps1.Update(GetFrameTime());
+        //ps1.Update(GetFrameTime());
+        lights.Update(GetFrameTime());
 
         BeginDrawing();
-            ps1.Render();
+            lights.Render();
+            //ps1.Render();
         EndDrawing();
     }
 
