@@ -16,3 +16,14 @@ Position Position::World()
 
     return out;
 }
+
+
+void Position::Translate(float x, float y, float z)
+{
+    Translate(Vector3{x, y, z});
+}
+
+void Position::Translate(Vector3 vec)
+{
+    translation = Vector3Add(translation, vec);
+}

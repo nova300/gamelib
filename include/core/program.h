@@ -3,8 +3,11 @@
 #include <vector>
 #include <memory>
 
+
+#include "graphics/renderqueue.h"
 #include "core/object.h"
 #include "core/position.h"
+
 
 class ProgramStack;
 
@@ -21,8 +24,10 @@ public:
     virtual void Wake() {};
     
     ProgramStack* GetStack();
+    RenderQueue* GetQueue();
 
 private:
+    RenderQueue renderQueue;
     std::vector<std::shared_ptr<Object>> objects;
     ProgramStack* stack = NULL;
 };

@@ -11,6 +11,8 @@ public:
     Vector3 scale = Vector3One();
 
     Position World();
+    void Translate(float x, float y, float z = 0);
+    void Translate(Vector3 vec);
 
 protected:
     Position* parent = NULL;

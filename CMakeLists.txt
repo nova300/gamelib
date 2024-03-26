@@ -4,7 +4,7 @@ project(gamelib VERSION 2.0.0)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(lib/raylib)
 
-add_library(gamelib source/core/object.cpp source/core/position.cpp source/graphics/renderqueue.cpp source/graphics/texturecache.cpp source/graphics/sprite.cpp source/core/programstack.cpp source/core/program.cpp source/core/objectstore.cpp source/core/behaviour.cpp source/behaviours/playermovement.cpp source/graphics/lights.cpp)
+add_library(gamelib source/core/object.cpp source/core/position.cpp source/graphics/renderqueue.cpp source/graphics/texturecache.cpp source/graphics/sprite.cpp source/core/programstack.cpp source/core/program.cpp source/core/objectstore.cpp source/core/behaviour.cpp source/behaviours/playermovement.cpp source/core/input.cpp)
 
 add_executable(testapp source/games/test.cpp)
 

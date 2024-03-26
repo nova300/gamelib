@@ -12,8 +12,7 @@ public:
     void LateUpdate(float deltaTime) override;
     void Render() override;
     void Destroy() override;
-
-    RenderQueue rq1;
+    
     ObjectStore os1;
 
     std::shared_ptr<Object> player;
