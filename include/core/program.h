@@ -3,10 +3,13 @@
 #include <vector>
 #include <memory>
 
-
+#include "core/objectstore.h"
 #include "graphics/renderqueue.h"
 #include "core/object.h"
 #include "core/position.h"
+
+
+#include <memory>
 
 
 class ProgramStack;
@@ -22,12 +25,17 @@ public:
     virtual void Destroy() {};
     virtual void Sleep() {};
     virtual void Wake() {};
+
+    virtual bool FadeIn() {return true;}
+    virtual bool FadeOut() {return true;}
     
     ProgramStack* GetStack();
-    RenderQueue* GetQueue();
-
 private:
-    RenderQueue renderQueue;
-    std::vector<std::shared_ptr<Object>> objects;
     ProgramStack* stack = NULL;
+    bool active = false;
+protected:
+    bool Active()
+    {
+        return active;
+    }
 };

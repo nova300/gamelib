@@ -1,6 +1,7 @@
 #include "core/objectstore.h"
+#include <stdio.h>
 
-void ObjectStore::Update(float deltaTime)
+void ObjectStore::UpdateObjects(float deltaTime)
 {
     for(auto& o : objects)
     {
@@ -9,7 +10,7 @@ void ObjectStore::Update(float deltaTime)
     }
 }
 
-void ObjectStore::LateUpdate(float deltaTime)
+void ObjectStore::LateUpdateObjects(float deltaTime)
 {
     for(auto& o : objects)
     {
@@ -18,26 +19,51 @@ void ObjectStore::LateUpdate(float deltaTime)
     }
 }
 
-void ObjectStore::Add(std::shared_ptr<Object> obj)
+void ObjectStore::AddObject(Object* obj)
 {
     newObjects.push_back(obj);
+}
+
+void ObjectStore::RemoveObject(Object* obj)
+{
+    int n = 0;
+    for(std::vector<Object*>::iterator it = objects.begin(); it != objects.end();)
+    {
+	    if(*it == obj)
+	    {
+	    	it = objects.erase(it);
+            n++;
+	    }
+	    else
+	    {
+	    	it++;
+	    }
+    }
+
+    printf("OBJECTSTORE: Removed %i objects\n", n);
 }
 
 void ObjectStore::ProcessNewObjects()
 {
     if(newObjects.size() > 0)
     {
-        for(const auto& o : newObjects)
+        int awakes = 0;
+        for(const auto o : newObjects)
         {
             o->Awake();
             o->AwakeBehaviours();
+            awakes++;
         }
+        printf("OBJECTSTORE: Awoke %i objects\n", awakes);
 
-        for(const auto& o : newObjects)
+        int inits = 0;
+        for(const auto o : newObjects)
         {
             o->Init();
             o->InitBehaviours();
+            inits++;
         }
+        printf("OBJECTSTORE: Initialized %i objects\n", inits);
 
         objects.assign(newObjects.begin(), newObjects.end());
 

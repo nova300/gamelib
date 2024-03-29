@@ -3,11 +3,11 @@
 
 #include <map>
 
-std::multimap<int, RenderQueue*> renderqueues;
+std::vector<RenderQueue*> renderQueues;
 
 RenderQueue::RenderQueue(int pass)
 {
-    renderqueues.emplace(pass, this);
+    SetPass(pass);
 }
 
 RenderQueue::~RenderQueue()
@@ -17,16 +17,17 @@ RenderQueue::~RenderQueue()
 
 void RenderQueue::SetPass(int pass)
 {
-    renderqueues.emplace(pass, this);
+    this->pass = pass;
+    renderQueues.push_back(this);
 }
 
 void RenderQueue::UnsetPass()
 {
-    for(std::map<int, RenderQueue*>::iterator it = renderqueues.begin(); it != renderqueues.end();)
+    for(std::vector<RenderQueue*>::iterator it = renderQueues.begin(); it != renderQueues.end();)
     {
-	    if((it->second) == this)
+	    if(*it == this)
 	    {
-	    	it = renderqueues.erase(it);
+	    	it = renderQueues.erase(it);
 	    }
 	    else
 	    {
@@ -35,47 +36,35 @@ void RenderQueue::UnsetPass()
     }
 }
 
-void RenderQueue::Draw()
+void RenderQueue::Render()
 {
-    if(camera2d != nullptr) BeginMode2D(*camera2d.get());
-    for(auto val : objects)
+    PreRender();
+    for(auto obj : objects)
     {
-        auto [pos, obj] = val;
-        if(!obj.expired())
-        {
-            auto obj1 = obj.lock();
-            obj1->Render();
-            obj1->RenderBehaviours();
-        }
+        obj->Render();
+        obj->RenderBehaviours();
     }
-    if(camera2d != nullptr) EndMode2D();
+    PostRender();
 }
 
 void RenderQueue::RenderAll()
 {
-    for(auto val : renderqueues)
+    for(auto q : renderQueues)
     {
-        auto [pass, queue] = val;
-
-        queue->Draw();
-
+        q->Render();
     }
 }
 
-void RenderQueue::Add(std::shared_ptr<Object> obj, float pos)
+void RenderQueue::Add(Object* obj)
 {
-    objects.emplace(pos, obj);
+    objects.push_back(obj);
 }
 
-void RenderQueue::Remove(std::shared_ptr<Object> obj)
+void RenderQueue::Remove(Object* obj)
 {
-    for(std::map<float, std::weak_ptr<Object>>::iterator it = objects.begin(); it != objects.end();)
+    for(std::vector<Object*>::iterator it = objects.begin(); it != objects.end();)
     {
-        if((it->second.expired()))
-        {
-            it = objects.erase(it);
-        }
-	    if((it->second.lock()) == obj)
+	    if(*it == obj)
 	    {
 	    	it = objects.erase(it);
 	    }

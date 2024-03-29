@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-#include <memory>
+#include <vector>
 #include <raylib.h>
 
 class Object;
@@ -14,13 +13,15 @@ public:
     ~RenderQueue();
     void SetPass(int pass);
     void UnsetPass();
-    void Add(std::shared_ptr<Object>, float position = 0.0f);
-    void Remove(std::shared_ptr<Object>);
-    void Draw();
+    void Add(Object* obj);
+    void Remove(Object *obj);
+    virtual void Render();
     static void RenderAll();
-private:
-    std::multimap<float, std::weak_ptr<Object>> objects;
-public:
-    std::shared_ptr<Camera2D> camera2d = nullptr;
+
+    virtual void PreRender() {};
+    virtual void PostRender() {};
+protected:
+    int pass = 0;
+    std::vector<Object*> objects;
 };
 

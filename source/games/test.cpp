@@ -4,6 +4,8 @@
 #include "core/programstack.h"
 #include "behaviours/playermovement.h"
 
+#include <raylib.h>
+
 int main(void)
 {
 
@@ -13,7 +15,7 @@ int main(void)
     SetTargetFPS(60);
     ProgramStack ps1;
 
-    ps1.Push(new TestProgram());
+    ps1.Switch(new TestProgram());
 
 
     while(!WindowShouldClose())
@@ -21,8 +23,7 @@ int main(void)
         ps1.Update(GetFrameTime());
 
         BeginDrawing();
-            ClearBackground(BLUE);
-            RenderQueue::RenderAll();
+            ps1.Render();
         EndDrawing();
     }
 
@@ -32,35 +33,53 @@ int main(void)
 
 void TestProgram::Init()
 {
-    player = std::make_shared<Object>();
-
-    auto sprite = player->AddBehaviour<Sprite>();
+    auto sprite = player.AddBehaviour<Sprite>();
     sprite->Load(std::string("player.png"));
 
-    player->AddBehaviour<PlayerMovement>();
+    player.AddBehaviour<PlayerMovement>();
 
-    GetQueue()->Add(player);
-    os1.Add(player);
+    camera = {0};
+
+    camera.zoom = 1;
+
+    player.position.scale = Vector3{5.0f, 5.0f, 1.0f};
+
+    AddObject(&player);
+    rq.Add(&player);
 
 
+
+    ProcessNewObjects();
+}
+
+bool TestProgram::FadeIn()
+{
+    return trans.FadeIn();
+}
+
+bool TestProgram::FadeOut()
+{
+    return trans.FadeOut();
 }
 
 void TestProgram::Update(float deltaTime)
 {
-    os1.Update(deltaTime);
+    UpdateObjects(deltaTime);
 }
 
 void TestProgram::LateUpdate(float deltaTime)
 {
-    os1.LateUpdate(deltaTime);
+    LateUpdateObjects(deltaTime);
 }
 
 void TestProgram::Destroy()
 {
-    
+    RemoveObject(&player);
+    rq.Remove(&player);
 }
 
 void TestProgram::Render()
 {
-
+    ClearBackground(BLUE);
+    RenderQueue::RenderAll();
 }

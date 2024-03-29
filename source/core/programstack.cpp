@@ -1,8 +1,10 @@
 #include "core/programstack.h"
 
+#include <stdio.h>
+
 void ProgramStack::Push(Program *program)
 {
-    if (!programStack.empty()) programStack.back()->Sleep();
+    if (!programStack.empty()) programStack.back()->active = false;
     programStack.push_back(program);
     program->stack = this;
     program->Init();
@@ -15,12 +17,27 @@ void ProgramStack::Pop()
     top->Destroy();
     delete(top);
     programStack.pop_back();
-    if (!programStack.empty()) programStack.back()->Wake();
+    if (!programStack.empty()) programStack.back()->active = true;
+}
+
+void ProgramStack::Switch(Program *program)
+{
+    if(programStack.empty())
+    {
+        state = FADEIN;
+        Push(program);
+        return;
+    }
+
+    nextProgram = program;
+    state = FADEOUT;
 }
 
 void ProgramStack::Update(float deltaTime)
 {
     if(programStack.empty()) return;
+    if(state == FADEOUT) return; //dont update if fading out
+
     for(auto& p : programStack)
     {
         p->Update(deltaTime);
@@ -35,9 +52,33 @@ void ProgramStack::Update(float deltaTime)
 void ProgramStack::Render()
 {
     if(programStack.empty()) return;
+
     for(auto& p : programStack)
     {
         p->Render();
+    }
+
+    switch (state)
+    {
+    case FADEIN:
+        if(GetTop()->FadeIn())
+        {
+            state = NORMAL;
+        }
+        break;
+    
+    case FADEOUT:
+        if(nextProgram == NULL) 
+        {
+            state = NORMAL;
+            printf("PROGRAMSTACK: FADEOUT set but no program is set to next");
+        }
+        if(GetTop()->FadeOut())
+        {
+            state = FADEIN;
+            Push(nextProgram);
+        }
+        break;
     }
 }
 

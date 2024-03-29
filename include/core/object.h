@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/behaviour.h"
-#include "core/program.h"
 #include "core/position.h"
 
 class Program;
@@ -25,8 +24,6 @@ public:
     void RenderBehaviours();
 
     Position position;
-
-    Program* GetProgram();
 
     //active / visible getters and setters
     bool Active();

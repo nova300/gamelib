@@ -8,16 +8,16 @@
 class ObjectStore
 {
 public:
-    void Add(std::shared_ptr<Object> obj);
-    void Remove(std::shared_ptr<Object> obj);
+    void AddObject(Object* obj);
+    void RemoveObject(Object* obj);
 
-    void Update(float deltaTime);
-    void LateUpdate(float deltaTime);
+    void UpdateObjects(float deltaTime);
+    void LateUpdateObjects(float deltaTime);
 
     void ProcessNewObjects();
     
 private:
-    std::vector<std::shared_ptr<Object>> objects;
-    std::vector<std::shared_ptr<Object>> newObjects;
+    std::vector<Object*> objects;
+    std::vector<Object*> newObjects;
 
 };
