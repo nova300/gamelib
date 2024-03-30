@@ -4,14 +4,19 @@
 
 #include "core/program.h"
 
+class Game;
+
 class ProgramStack
 {
 public:
+    //ProgramStack();
+    //static void UpdateAll(float deltaTime);
     void Push(Program *program);
     void Switch(Program *program);
     void Pop(void);
     void Update(float deltaTime);
-    void Render(void);
+    void PostUpdate(float deltaTime);
+    void Render();
     Program *GetTop(void);
     void Reload(Program* start);
     void Clear(void);

@@ -12,7 +12,7 @@ public:
     void RemoveObject(Object* obj);
 
     void UpdateObjects(float deltaTime);
-    void LateUpdateObjects(float deltaTime);
+    void PostUpdateObjects(float deltaTime);
 
     void ProcessNewObjects();
     

@@ -10,7 +10,7 @@ class TestProgram : public Program, public ObjectStore
 public:
     void Init() override;
     void Update(float deltaTime) override;
-    void LateUpdate(float deltaTime) override;
+    void PostUpdate(float deltaTime) override;
     void Render() override;
     void Destroy() override;
 
@@ -21,5 +21,5 @@ public:
     
     Object player;
     Camera2D camera;
-    RenderQueueSorted2D rq = RenderQueueSorted2D(&camera, 0);
+    RenderQueueSorted2D rq = RenderQueueSorted2D(&camera);
 };

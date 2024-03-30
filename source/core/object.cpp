@@ -44,11 +44,11 @@ void Object::UpdateBehaviours(float deltaTime)
     }
 }
 
-void Object::LateUpdateBehaviours(float deltaTime)
+void Object::PostUpdateBehaviours(float deltaTime)
 {
     for(auto& b : behaviours)
     {
-        b->LateUpdate(deltaTime);
+        b->PostUpdate(deltaTime);
     }
 }
 

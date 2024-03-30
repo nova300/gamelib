@@ -10,12 +10,12 @@ void ObjectStore::UpdateObjects(float deltaTime)
     }
 }
 
-void ObjectStore::LateUpdateObjects(float deltaTime)
+void ObjectStore::PostUpdateObjects(float deltaTime)
 {
     for(auto& o : objects)
     {
-        o->LateUpdate(deltaTime);
-        o->LateUpdateBehaviours(deltaTime);
+        o->PostUpdate(deltaTime);
+        o->PostUpdateBehaviours(deltaTime);
     }
 }
 

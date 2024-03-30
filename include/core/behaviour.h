@@ -12,7 +12,7 @@ public:
     virtual void Awake() {};
     virtual void Init() {};
     virtual void Update(float deltaTime) {};
-    virtual void LateUpdate(float deltaTime) {};
+    virtual void PostUpdate(float deltaTime) {};
     virtual void Render() {};
 
     Object* GetObject();

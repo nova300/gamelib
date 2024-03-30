@@ -45,7 +45,7 @@ void TestProgram::Init()
     player.position.scale = Vector3{5.0f, 5.0f, 1.0f};
 
     AddObject(&player);
-    rq.Add(&player);
+    rq.AddRender(&player);
 
 
 
@@ -67,19 +67,19 @@ void TestProgram::Update(float deltaTime)
     UpdateObjects(deltaTime);
 }
 
-void TestProgram::LateUpdate(float deltaTime)
+void TestProgram::PostUpdate(float deltaTime)
 {
-    LateUpdateObjects(deltaTime);
+    PostUpdateObjects(deltaTime);
 }
 
 void TestProgram::Destroy()
 {
     RemoveObject(&player);
-    rq.Remove(&player);
+    rq.RemoveRender(&player);
 }
 
 void TestProgram::Render()
 {
     ClearBackground(BLUE);
-    RenderQueue::RenderAll();
+    rq.DrawRender();
 }

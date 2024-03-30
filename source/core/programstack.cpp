@@ -1,8 +1,30 @@
 #include "core/programstack.h"
 
 #include <stdio.h>
+/*#include <set>
+
+std::set<ProgramStack*> programStacks;
+
+ProgramStack::ProgramStack()
+{
+    programStacks.emplace(this);
+}
+
+ProgramStack::~ProgramStack()
+{
+    programStacks.erase(this);
+}
+
+void ProgramStack::UpdateAll(float deltaTime)
+{
+    for(auto stk : programStacks)
+    {
+        stk->Update(deltaTime);
+    }
+}*/
 
 void ProgramStack::Push(Program *program)
+
 {
     if (!programStack.empty()) programStack.back()->active = false;
     programStack.push_back(program);
@@ -37,15 +59,19 @@ void ProgramStack::Update(float deltaTime)
 {
     if(programStack.empty()) return;
     if(state == FADEOUT) return; //dont update if fading out
-
     for(auto& p : programStack)
     {
         p->Update(deltaTime);
-    }
+    }    
+}
 
+void ProgramStack::PostUpdate(float deltaTime)
+{
+    if(programStack.empty()) return;
+    if(state == FADEOUT) return; //dont update if fading out
     for(auto& p : programStack)
     {
-        p->LateUpdate(deltaTime);
+        p->PostUpdate(deltaTime);
     }
 }
 
@@ -53,10 +79,12 @@ void ProgramStack::Render()
 {
     if(programStack.empty()) return;
 
-    for(auto& p : programStack)
+    /*for(auto& p : programStack)
     {
         p->Render();
-    }
+    }*/
+
+    GetTop()->Render();
 
     switch (state)
     {

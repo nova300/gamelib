@@ -1,9 +1,9 @@
 #include "graphics/renderqueue.h"
 #include "core/object.h"
 
-#include <map>
+//#include <map>
 
-std::vector<RenderQueue*> renderQueues;
+/*std::vector<RenderQueue*> renderQueues;
 
 RenderQueue::RenderQueue(int pass)
 {
@@ -34,9 +34,9 @@ void RenderQueue::UnsetPass()
 	    	it++;
 	    }
     }
-}
+} */
 
-void RenderQueue::Render()
+void RenderQueue::DrawRender()
 {
     PreRender();
     for(auto obj : objects)
@@ -47,20 +47,20 @@ void RenderQueue::Render()
     PostRender();
 }
 
-void RenderQueue::RenderAll()
+/*void RenderQueue::RenderAll()
 {
     for(auto q : renderQueues)
     {
         q->Render();
     }
-}
+}*/
 
-void RenderQueue::Add(Object* obj)
+void RenderQueue::AddRender(Object* obj)
 {
     objects.push_back(obj);
 }
 
-void RenderQueue::Remove(Object* obj)
+void RenderQueue::RemoveRender(Object* obj)
 {
     for(std::vector<Object*>::iterator it = objects.begin(); it != objects.end();)
     {

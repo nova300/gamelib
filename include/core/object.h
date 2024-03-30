@@ -14,13 +14,13 @@ public:
     virtual void Awake() {};
     virtual void Init() {};
     virtual void Update(float deltaTime) {};
-    virtual void LateUpdate(float deltaTime) {};
+    virtual void PostUpdate(float deltaTime) {};
     virtual void Render() {};
 
     void AwakeBehaviours();
     void InitBehaviours();
     void UpdateBehaviours(float deltaTime);
-    void LateUpdateBehaviours(float deltaTime);
+    void PostUpdateBehaviours(float deltaTime);
     void RenderBehaviours();
 
     Position position;
