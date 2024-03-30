@@ -62,13 +62,8 @@ void ProgramStack::Update(float deltaTime)
     for(auto& p : programStack)
     {
         p->Update(deltaTime);
-    }    
-}
+    }
 
-void ProgramStack::PostUpdate(float deltaTime)
-{
-    if(programStack.empty()) return;
-    if(state == FADEOUT) return; //dont update if fading out
     for(auto& p : programStack)
     {
         p->PostUpdate(deltaTime);

@@ -1,5 +1,6 @@
 #include "graphics/texturecache.h"
 #include <map>
+#include <memory>
 
 struct TextureCacheEntry
 {
@@ -10,26 +11,49 @@ struct TextureCacheEntry
     int count;
 };
 
-std::map<std::string, TextureCacheEntry> textureCache;
+std::map<std::string, std::weak_ptr<CTexture>> textureCache;
 
-Texture2D CLoadTexture(std::string path)
+std::shared_ptr<CTexture> CLoadTexture(std::string path)
 {
     if (textureCache.count(path) == 0)
     {
-        textureCache.emplace(path, LoadTexture(path.c_str())); // = TextureCacheEntry(LoadTexture(path.c_str()));
-        TextureCacheEntry &tc = textureCache.at(path);
-        return tc.texture;
+        auto tex = std::make_shared<CTexture>(path);
+        textureCache.emplace(path, tex);
+        return tex;
     }
     else 
     {
-        TextureCacheEntry &tc = textureCache.at(path);
-        if (tc.count < 1) textureCache.emplace(path, LoadTexture(path.c_str()));
-        else tc.count++;
-        return tc.texture;
+        auto weaktex = textureCache.at(path);
+        if(weaktex.expired())
+        {
+            textureCache.erase(path);
+            auto tex = std::make_shared<CTexture>(path);
+            textureCache.emplace(path, tex);
+            return tex;
+        }
+        else
+        {
+            return weaktex.lock();
+        }
     }
 }
 
-void CUnloadTexture(Texture2D texture)
+CTexture::CTexture(std::string path)
+{
+    texture = LoadTexture(path.c_str());
+}
+
+CTexture::~CTexture()
+{
+    if(IsTextureReady(texture)) UnloadTexture(texture);
+}
+
+Texture2D CTexture::Texture()
+{
+    return texture;
+}
+
+/*void CUnloadTexture(Texture2D texture)
 {
     for ( auto &[cpath, ctex] : textureCache)
     {
@@ -47,4 +71,4 @@ void CUnloadTexture(Texture2D texture)
                 return;
             }
     }
-}
+}*/

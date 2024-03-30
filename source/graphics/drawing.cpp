@@ -1,4 +1,3 @@
-#include "graphics.h"
 #include "raylib.h"
 #include "rlgl.h"
 
@@ -52,4 +51,168 @@ void DrawTextureProZ(Texture2D texture, Rectangle source, Rectangle dest, Vector
 
         rlDisableTexture();
     }
+}
+
+void DrawQuad(Texture2D texture, Rectangle source, Vector3 position, Vector3 rotation, Vector3 scale, Vector2 size, Vector2 origin, Color tint)
+{
+    if (texture.id == 0) return;
+
+    rlSetTexture(texture.id);
+        rlPushMatrix();
+            rlTranslatef(-origin.x, -origin.y, 0.0f);
+
+            rlScalef(scale.x, scale.y, scale.z);
+            
+            Quaternion q = QuaternionFromEuler(rotation.x, rotation.y, rotation.z);
+            float angle;
+            Vector3 axis;
+            QuaternionToAxisAngle(q, &axis, &angle);
+            rlRotatef(angle, axis.x, axis.y, axis.z);
+            
+            rlTranslatef(position.x, position.y, position.z);
+
+            
+
+            rlBegin(RL_QUADS);
+                rlColor4ub(tint.r, tint.g, tint.b, tint.a);
+                rlNormal3f(0.0f, 0.0f, 1.0f);                          // Normal vector pointing towards viewer
+
+
+                // Top left
+                rlTexCoord2f((float)source.x/texture.width, (float)source.y/texture.height);
+                rlVertex3f(0.0f, 0.0f, 0.0f);
+
+                // bottom left
+                rlTexCoord2f((float)source.x/texture.width, (float)(source.y + source.height)/texture.height);
+                rlVertex3f(0.0f, -size.y, 0.0f);
+
+                // bottom right
+                rlTexCoord2f((float)(source.x + source.width)/texture.width, (float)(source.y + source.height)/texture.height);
+                rlVertex3f(size.x, -size.y, 0.0f);
+
+                // top right
+                rlTexCoord2f((float)(source.x + source.width)/texture.width, (float)source.y/texture.height);
+                rlVertex3f(size.x, 0.0f, 0.0f);
+                
+            rlEnd();
+    rlPopMatrix();
+    rlSetTexture(0);
+}
+
+void DrawQuadWall(Texture2D texture, Rectangle source, Matrix transform, Vector2 size, Vector2 origin, float rotation, Color tint)
+{
+    if (texture.id == 0) return;
+
+    rlSetTexture(texture.id);
+        rlPushMatrix();
+            
+            if (rotation != 0.0f) rlRotatef(rotation, 0.0f, 0.0f, 1.0f);
+            rlTranslatef(-origin.x, -origin.y, 0.0f);
+            rlMultMatrixf(MatrixToFloat(transform));
+            
+
+            rlBegin(RL_QUADS);
+                rlColor4ub(tint.r, tint.g, tint.b, tint.a);
+                rlNormal3f(0.0f, 0.0f, 1.0f);                          // Normal vector pointing towards viewer
+
+
+                // Top left
+                rlTexCoord2f((float)source.x/texture.width, (float)source.y/texture.height);
+                rlVertex3f(0.0f, 0.0f, 0.0f);
+
+                // bottom left
+                rlTexCoord2f((float)source.x/texture.width, (float)(source.y + source.height)/texture.height);
+                rlVertex3f(0.0f, -size.y, 0.0f);
+
+                // bottom right
+                rlTexCoord2f((float)(source.x + source.width)/texture.width, (float)(source.y + source.height)/texture.height);
+                rlVertex3f(size.x, -size.y, 0.0f);
+
+                // top right
+                rlTexCoord2f((float)(source.x + source.width)/texture.width, (float)source.y/texture.height);
+                rlVertex3f(size.x, 0.0f, 0.0f);
+                
+            rlEnd();
+    rlPopMatrix();
+    rlSetTexture(0);
+}
+
+void DrawQuadFloor(Texture2D texture, Rectangle source, Matrix transform, Vector2 size, Vector2 origin, float rotation, Color tint)
+{
+    if (texture.id == 0) return;
+
+    rlSetTexture(texture.id);
+        rlPushMatrix();
+            
+            if (rotation != 0.0f) rlRotatef(rotation, 0.0f, 1.0f, 0.0f);
+            rlTranslatef(-origin.x, 0.0f, -origin.y);
+            rlMultMatrixf(MatrixToFloat(transform));
+            
+
+            rlBegin(RL_QUADS);
+                rlColor4ub(tint.r, tint.g, tint.b, tint.a);
+                rlNormal3f(0.0f, 1.0f, 0.0f);                          // Normal vector pointing towards viewer
+
+                // Top left
+                rlTexCoord2f((float)source.x/texture.width, (float)source.y/texture.height);
+                rlVertex3f(0.0f, 0.0f, 0.0f);
+
+                // bottom left
+                rlTexCoord2f((float)source.x/texture.width, (float)(source.y + source.height)/texture.height);
+                rlVertex3f(0.0f, 0.0f, size.y);
+
+                // bottom right
+                rlTexCoord2f((float)(source.x + source.width)/texture.width, (float)(source.y + source.height)/texture.height);
+                rlVertex3f(size.x, 0.0f, size.y);
+
+                // top right
+                rlTexCoord2f((float)(source.x + source.width)/texture.width, (float)source.y/texture.height);
+                rlVertex3f(size.x, 0.0f, 0.0f);
+                
+            rlEnd();
+    rlPopMatrix();
+    rlSetTexture(0);
+}
+
+void DrawColorQuad(Matrix transform, Vector2 size, Vector2 origin, float rotation, Color tint)
+{
+        rlPushMatrix();
+            
+            if (rotation != 0.0f) rlRotatef(rotation, 0.0f, 0.0f, 1.0f);
+            rlTranslatef(-origin.x, -origin.y, 0.0f);
+            rlMultMatrixf(MatrixToFloat(transform));
+            
+
+            rlBegin(RL_QUADS);
+                rlColor4ub(tint.r, tint.g, tint.b, tint.a);
+                rlNormal3f(0.0f, 0.0f, 1.0f);                          // Normal vector pointing towards viewer
+
+
+                // Top left
+                rlVertex3f(0.0f, 0.0f, 0.0f);
+
+                // bottom left
+                rlVertex3f(0.0f, -size.y, 0.0f);
+
+                // bottom right
+                rlVertex3f(size.x, -size.y, 0.0f);
+
+                // top right
+                rlVertex3f(size.x, 0.0f, 0.0f);
+                
+            rlEnd();
+    rlPopMatrix();
+}
+
+void DrawScreenQuad(Texture2D texture, Rectangle source)
+{
+    DrawTexturePro(texture, source, Rectangle{0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, Vector2{0,0}, 0.0, WHITE);
+}
+
+Vector2 GetScreenToWorld3D(Vector2 position, Camera camera)
+{
+    Matrix invMatCamera = MatrixInvert(GetCameraMatrix(camera));
+    Vector3 transform = Vector3Transform(Vector3{ position.x, position.y, 0 }, invMatCamera);
+
+    return Vector2{ transform.x, transform.y };
 }

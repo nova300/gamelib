@@ -15,7 +15,7 @@ public:
     void Switch(Program *program);
     void Pop(void);
     void Update(float deltaTime);
-    void PostUpdate(float deltaTime);
+    //void PostUpdate(float deltaTime);
     void Render();
     Program *GetTop(void);
     void Reload(Program* start);

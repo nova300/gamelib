@@ -1,7 +1,16 @@
 #pragma once
 #include <raylib.h>
 #include <string>
+#include <memory>
 
-Texture2D CLoadTexture(std::string path);
-void CUnloadTexture(Texture2D texture);
-void ClearTextureCache(void);
+class CTexture
+{
+public:
+    CTexture(std::string path);
+    ~CTexture();
+    Texture2D Texture();
+private:
+    Texture2D texture;
+};
+
+std::shared_ptr<CTexture> CLoadTexture(std::string path);

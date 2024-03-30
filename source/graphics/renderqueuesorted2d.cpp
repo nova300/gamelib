@@ -6,7 +6,7 @@
 
 static bool compareByZ(const Object *a, const Object *b)
 {
-    return a->position.translation.z < b->position.translation.z;
+    return a->position.z < b->position.z;
 }
 
 void RenderQueueSorted2D::PreRender()

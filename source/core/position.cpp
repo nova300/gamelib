@@ -6,7 +6,7 @@ Position Position::World()
     if(this->parent)
     {
         Position outp = this->parent->World();
-        outp.translation = Vector3Add(outp.translation, this->translation);
+        outp.Translate(this);
         outp.rotation = Vector3Add(outp.rotation, this->rotation);
         outp.scale = Vector3Add(outp.scale, this->scale);
         return outp;
@@ -18,12 +18,21 @@ Position Position::World()
 }
 
 
-void Position::Translate(float x, float y, float z)
+void Position::Translate(float X, float Y, float Z)
 {
-    Translate(Vector3{x, y, z});
+    x += X;
+    y += Y;
+    z += Z;
+}
+
+void Position::Translate(Position *pos)
+{
+    x += pos->x;
+    y += pos->y;
+    z += pos->z;
 }
 
 void Position::Translate(Vector3 vec)
 {
-    translation = Vector3Add(translation, vec);
+    Translate(vec.x, vec.y, vec.z);
 }

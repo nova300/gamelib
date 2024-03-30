@@ -15,3 +15,23 @@ private:
     float intimer = 0.0f;
     float outtimer = 0.0f;
 };
+
+
+class IrisTransition
+{
+public:
+    IrisTransition(float time = 1.0f, Color color = BLACK, int width = 100, int height = 75);
+    ~IrisTransition();
+    bool FadeIn();
+    bool FadeOut();
+private:
+    RenderTexture2D canvas;
+    Color color;
+    float time = 1.0f;
+    float intimer = 0.0f;
+    float outtimer = 0.0f;
+    int targetX;
+    int targetY;
+    int width;
+    int height;
+};
