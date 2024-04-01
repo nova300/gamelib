@@ -36,27 +36,18 @@ static Rectangle ScaleCanvasKeepAspect(Rectangle canvas, int marginX, int margin
 Vector2 FrameBuffer::ScreenToCanvas(Vector2 POS)
 {
     const auto screenCanvas = ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)width, (float)height}, marginX, marginY);
-    const Rectangle canvas = Rectangle{0.0f, 0.0f, (float)width, (float)height};
 
-    float x = POS.x;
-    float y = POS.y;
+    Vector2 out = POS;
 
-    const float virtualRatio =  (float)canvas.width / (float)canvas.height;
-    const float canvasScreenRatio = screenCanvas.width / screenCanvas.height;
-    float screenHeight = GetScreenHeight();
-    if(screenHeight < 1.0f) screenHeight = 1.0f;
-    const float screenRatio = (float)GetScreenWidth() / screenHeight;
+    out.x -= screenCanvas.x;
+    out.y -= screenCanvas.y;
 
-    x -= screenCanvas.x;
-    y -= screenCanvas.y;
+    out.x /= screenCanvas.width;
+    out.y /= screenCanvas.height;
+    out.x *= width;
+    out.y *= height;
 
-    x /= canvasScreenRatio;
-    y /= canvasScreenRatio;
-
-    x *= virtualRatio;
-    y *= virtualRatio;
-
-    return Vector2{x, y};
+    return out;
 }
 
 FrameBuffer::FrameBuffer(int WIDTH, int HEIGHT, int MARGINX, int MARGINY)
