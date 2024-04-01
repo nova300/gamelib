@@ -8,12 +8,13 @@
 
 
 #include <raylib.h>
+#include <raymath.h>
 
 int main(void)
 {
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(800, 600, "LibGame V.2");
+    InitWindow(1024, 738, "LibGame V.2");
     SetTargetFPS(60);
 
     ProgramStack ps1;
@@ -82,12 +83,27 @@ void TestProgram::Init()
 
     camera.zoom = 1;
 
-    //player.position.scale = Vector3{1f, 5.0f, 1.0f};
+    player.position.z = 1.0f;
+
+    
 
     AddObject(&player);
     rq.AddRender(&player);
 
 
+
+    auto mapsprite = map.AddBehaviour<Sprite>();
+
+    auto mapimg = GenImageChecked(2000, 2000, 16, 16, GREEN, DARKGREEN);
+
+    auto maptex = CLoadTexture(mapimg);
+    
+    mapsprite->Load(maptex);
+
+    UnloadImage(mapimg);
+
+    AddObject(&map);
+    rq.AddRender(&map);
 
     ProcessNewObjects();
 }
@@ -106,16 +122,50 @@ void TestProgram::Update(float deltaTime)
 {
     UpdateCameraPlayerBoundsPush(&camera, &player, canvaswidth, canvasheight);
     UpdateObjects(deltaTime);
+    
+
+    if(IsKeyPressed(KEY_F1))
+    {
+        GetStack()->Switch(new TestProgram());
+    }
 }
+
+void TestProgram::SoftRender()
+{
+    auto vec1 = GetWorldToScreen2D(Vector2{player.position.x + 16, player.position.y + 16}, camera);
+    vec1.x /= 2;
+    vec1.y /= 2;
+    trans.Update(vec1.x, vec1.y);
+
+    Vector2 mouse = GetMousePosition();
+    mouse.x -= marginX;
+    mouse.y -= marginY;
+
+    mouse.x /= GetScreenWidth();
+    mouse.y /= GetScreenHeight();
+    mouse.x *= canvaswidth;
+    mouse.y *= canvasheight;
+
+    //Vector2 mousepos = {0};
+
+    
+
+    //Vector2 mousepos = GetScreenToWorld2D(mouse, camera);
+    
+    
+
+    printf("X: %f Y: %f\n", mouse.x, mouse.y);
+
+    BeginTextureMode(canvas);
+        ClearBackground(DARKGRAY);
+        rq.DrawRender();
+        DrawCircle(mouse.x, mouse.y, 32.0f, RED);
+    EndTextureMode();
+}   
 
 void TestProgram::PostUpdate(float deltaTime)
 {
     PostUpdateObjects(deltaTime);
-
-    //BeginTextureMode(canvas);
-    //    ClearBackground(BLACK);
-    //    rq.DrawRender();
-    //EndTextureMode();
 }
 
 void TestProgram::Destroy()
@@ -126,13 +176,9 @@ void TestProgram::Destroy()
     UnloadRenderTexture(canvas);
 }
 
-void TestProgram::Render()
+static Rectangle ScaleCanvasKeepAspect(Rectangle canvas, int marginX, int marginY)
 {
-    ClearBackground(BLUE);
-
-    rq.DrawRender();
-
-    /*const float virtualRatio =  (float)canvaswidth / (float)canvasheight;
+    const float virtualRatio =  (float)canvas.width / (float)canvas.height;
     float screenHeight = GetScreenHeight();
     if(screenHeight < 1.0f) screenHeight = 1.0f;
     const float screenRatio = (float)GetScreenWidth() / screenHeight;
@@ -159,7 +205,15 @@ void TestProgram::Render()
         adjustedX = centering;
         //printf("adjusting width\n");
     }
-    DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)-canvasheight}, Rectangle{adjustedX, adjustedY, adjustedWidth, adjustedHeight} , Vector2Zero(), 0.0f, WHITE);
-    */
+
+    return Rectangle{adjustedX, adjustedY, adjustedWidth, adjustedHeight};
+}
+
+void TestProgram::Render()
+{
+    ClearBackground(DARKBLUE);
+
+    //rq.DrawRender();
+    DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)-canvasheight}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)canvasheight}, 50, 50) , Vector2Zero(), 0.0f, WHITE);
 
 }

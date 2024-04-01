@@ -1,6 +1,8 @@
 #include "core/programstack.h"
 
 #include <stdio.h>
+#include <typeinfo>
+#include <iostream>
 /*#include <set>
 
 std::set<ProgramStack*> programStacks;
@@ -44,6 +46,8 @@ void ProgramStack::Pop()
 
 void ProgramStack::Switch(Program *program)
 {
+    //if(state == FADEOUT) return;
+    std::cout << "PROGRAMSTACK: switching to : " << typeid(*program).name() << std::endl;
     if(programStack.empty())
     {
         state = FADEIN;
@@ -58,16 +62,27 @@ void ProgramStack::Switch(Program *program)
 void ProgramStack::Update(float deltaTime)
 {
     if(programStack.empty()) return;
-    if(state == FADEOUT) return; //dont update if fading out
-    for(auto& p : programStack)
+
+
+    if (state != FADEOUT) // dont update if fading out
     {
-        p->Update(deltaTime);
-    }
+        for (auto &p : programStack)
+        {
+            p->Update(deltaTime);
+        }
+
+        for (auto &p : programStack)
+        {
+            p->PostUpdate(deltaTime);
+        }
+    } 
+
 
     for(auto& p : programStack)
     {
-        p->PostUpdate(deltaTime);
+        p->SoftRender();
     }
+
 }
 
 void ProgramStack::Render()
@@ -86,6 +101,7 @@ void ProgramStack::Render()
     case FADEIN:
         if(GetTop()->FadeIn())
         {
+            printf("PROGRAMSTACK: fadein done\n");
             state = NORMAL;
         }
         break;
@@ -98,6 +114,7 @@ void ProgramStack::Render()
         }
         if(GetTop()->FadeOut())
         {
+            printf("PROGRAMSTACK: fadeout done\n");
             state = FADEIN;
             Push(nextProgram);
         }

@@ -22,6 +22,7 @@ public:
     virtual void Update(float deltaTime) {};
     virtual void PostUpdate(float deltaTime) {};
     virtual void Render() {};
+    virtual void SoftRender() {};
     virtual void Destroy() {};
     virtual void Sleep() {};
     virtual void Wake() {};

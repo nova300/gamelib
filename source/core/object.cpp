@@ -59,3 +59,11 @@ void Object::RenderBehaviours()
         b->Render();
     }
 }
+
+/*void Object::SoftRenderBehaviours()
+{
+    for(auto& b : behaviours)
+    {
+        b->SoftRender();
+    }
+}*/

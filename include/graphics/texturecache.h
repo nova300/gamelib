@@ -7,6 +7,7 @@ class CTexture
 {
 public:
     CTexture(std::string path);
+    CTexture(Image img);
     ~CTexture();
     Texture2D Texture();
 private:
@@ -14,3 +15,5 @@ private:
 };
 
 std::shared_ptr<CTexture> CLoadTexture(std::string path);
+
+std::shared_ptr<CTexture> CLoadTexture(Image img);

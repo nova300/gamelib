@@ -13,22 +13,24 @@ public:
     void Init() override;
     void Update(float deltaTime) override;
     void PostUpdate(float deltaTime) override;
+    void SoftRender() override;
     void Render() override;
     void Destroy() override;
 
     bool FadeIn() override;
     bool FadeOut() override;
 
-    FadeTransition trans = FadeTransition(2.0f, BLACK);
+    IrisTransition trans = IrisTransition(2.0f, DARKBLUE, 160, 100);
 
     RenderTexture2D canvas;
     
-    int canvaswidth = 256;
-    int canvasheight = 224;
-    int marginX = 60;
-    int marginY = 50;
+    int canvaswidth = 320;
+    int canvasheight = 200;
+    int marginX = 30;
+    int marginY = 20;
     
     Object player;
+    Object map;
     Camera2D camera;
     RenderQueueSorted2D rq = RenderQueueSorted2D(&camera);
 

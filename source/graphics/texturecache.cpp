@@ -38,9 +38,20 @@ std::shared_ptr<CTexture> CLoadTexture(std::string path)
     }
 }
 
+std::shared_ptr<CTexture> CLoadTexture(Image img)
+{
+    auto tex = std::make_shared<CTexture>(img);
+    return tex;
+}
+
 CTexture::CTexture(std::string path)
 {
     texture = LoadTexture(path.c_str());
+}
+
+CTexture::CTexture(Image img)
+{
+    texture = LoadTextureFromImage(img);
 }
 
 CTexture::~CTexture()
