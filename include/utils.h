@@ -8,6 +8,11 @@ bool string_compare(const char* ctstr, const char* compstring);
 
 Vector2 smooth_towards(float curr, float target, float duration, float curr_velocity);
 
+Color GetRandomColor();
+
+Color GetHueColor(float v);
+
+float sign(float val);
 
 template<typename T>
 std::pair<T, T> Shuffle(T t1, T t2)

@@ -2,6 +2,7 @@
 
 #include "core/behaviour.h"
 #include "core/position.h"
+#include "physics/collider.h"
 
 class Program;
 
@@ -16,12 +17,20 @@ public:
     virtual void Update(float deltaTime) {};
     virtual void PostUpdate(float deltaTime) {};
     virtual void Render() {};
+    virtual void OnCollision(CollisionInfo info) {};
 
     void AwakeBehaviours();
     void InitBehaviours();
     void UpdateBehaviours(float deltaTime);
     void PostUpdateBehaviours(float deltaTime);
     void RenderBehaviours();
+    void OnCollisionBehaviours(CollisionInfo info);
+
+    std::vector<CollisionShape> GetColliders();
+
+    //std::vector<Rectangle> GetCollisionRects();
+    //std::vector<Vector3> GetCollisionCircles();
+    //std::vector<Vector2> GetCollisionPoints();
 
     Position position;
 

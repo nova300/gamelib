@@ -67,3 +67,11 @@ void Object::RenderBehaviours()
         b->SoftRender();
     }
 }*/
+
+void Object::OnCollisionBehaviours(CollisionInfo info)
+{
+    for(auto& b : behaviours)
+    {
+        b->OnCollision(info);
+    }
+}

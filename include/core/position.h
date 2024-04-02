@@ -14,6 +14,7 @@ public:
     Vector3 scale = Vector3One();
 
     Position World();
+    Vector2 Vec2();
     void Translate(float x, float y, float z = 0);
     void Translate(Vector3 vec);
     void Translate(Position *pos);

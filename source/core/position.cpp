@@ -17,6 +17,11 @@ Position Position::World()
     return out;
 }
 
+Vector2 Position::Vec2()
+{
+    return Vector2{x, y};
+}
+
 
 void Position::Translate(float X, float Y, float Z)
 {
