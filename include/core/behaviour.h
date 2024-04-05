@@ -1,8 +1,9 @@
 #pragma once
 #include <vector>
 
+#include "physics/types.h"
+
 class Object;
-struct CollisionInfo;
 
 class Behaviour
 {

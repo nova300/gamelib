@@ -9,27 +9,11 @@
 
 #include "core/behaviour.h"
 #include "core/object.h"
+#include "physics/types.h"
 
 #define MAX_COLLIDERS 64;
 
-class ColliderSet;
-
-struct CollisionInfo
-{
-    Object *other = NULL;
-    Vector2 position = Vector2Zero();
-    Vector2 pushout = Vector2Zero();
-    Vector2 normal = Vector2Zero();
-};
-
-enum CollisionShape
-{
-    COL_UNDEFINED,
-    COL_POINT,
-    COL_BOX,
-    COL_SPRITE,
-    COL_CIRCLE
-};
+class Collider;
 
 struct ColliderShapeData
 {
@@ -121,7 +105,7 @@ protected:
 private:
     CollisionShape type = COL_UNDEFINED;
     float offsetX;
-    float offsetX;
+    float offsetY;
     float width;
     float height;
 

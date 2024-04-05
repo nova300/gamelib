@@ -101,7 +101,7 @@ void TestProgram::Init()
     sprite->PushFrame(PlayerAnimations::RUN_DOWN, atlas.GetSpriteFrame(1));
     sprite->PushFrame(PlayerAnimations::RUN_DOWN, atlas.GetSpriteFrame(8));
 
-    sprite->PushFrame(PlayerAnimations::RUN_SIDE, atlas.GetSpriteFrame(2, 0.0f));
+    sprite->PushFrame(PlayerAnimations::RUN_SIDE, atlas.GetSpriteFrame(2, 0.05f));
     sprite->PushFrame(PlayerAnimations::RUN_SIDE, atlas.GetSpriteFrame(3, 0.05f));
     sprite->PushFrame(PlayerAnimations::RUN_SIDE, atlas.GetSpriteFrame(2, 0.05f));
 
@@ -193,12 +193,12 @@ void TestProgram::SoftRender()
     
     
 
-    printf("X: %f Y: %f\n", mouse.x, mouse.y);
+    //printf("X: %f Y: %f\n", mouse.x, mouse.y);
 
     BeginTextureMode(canvas);
         ClearBackground(DARKGRAY);
         rq.DrawRender();
-        DrawCircle(mouse.x, mouse.y, 32.0f, RED);
+        //rawCircle(mouse.x, mouse.y, 32.0f, RED);
     EndTextureMode();
 }   
 

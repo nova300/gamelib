@@ -154,11 +154,11 @@ CollisionInfo Collider::Info(Collider *other)
             break;
 
         case COL_CIRCLE:
-            return CheckCollisionCircleRec(other->Point(), other->Radius(), Box());
+            //return CheckCollisionCircleRec(other->Point(), other->Radius(), Box());
             break;
 
         case COL_POINT:
-            return CheckCollisionPointRec(other->Point(), Box());
+            //return CheckCollisionPointRec(other->Point(), Box());
             break;
         }
         break;
@@ -167,19 +167,19 @@ CollisionInfo Collider::Info(Collider *other)
         switch (other->type)
         {
         case COL_BOX:
-            return CheckCollisionRecs(Sprite(), other->Box());
+            //return CheckCollisionRecs(Sprite(), other->Box());
             break;
 
         case COL_SPRITE:
-            return CheckCollisionRecs(Sprite(), other->Sprite());
+            //return CheckCollisionRecs(Sprite(), other->Sprite());
             break;
 
         case COL_CIRCLE:
-            return CheckCollisionCircleRec(other->Point(), other->Radius(), Sprite());
+            //return CheckCollisionCircleRec(other->Point(), other->Radius(), Sprite());
             break;
 
         case COL_POINT:
-            return CheckCollisionPointRec(other->Point(), Sprite());
+            //return CheckCollisionPointRec(other->Point(), Sprite());
             break;
         }
         break;
@@ -188,19 +188,19 @@ CollisionInfo Collider::Info(Collider *other)
         switch (other->type)
         {
         case COL_BOX:
-            return CheckCollisionCircleRec(Point(), Radius(), other->Box());
+            //return CheckCollisionCircleRec(Point(), Radius(), other->Box());
             break;
 
         case COL_SPRITE:
-            return CheckCollisionCircleRec(Point(), Radius(), other->Sprite());
+            //return CheckCollisionCircleRec(Point(), Radius(), other->Sprite());
             break;
 
         case COL_CIRCLE:
-            return CheckCollisionCircles(Point(), Radius(), other->Point(), other->Radius());
+            //return CheckCollisionCircles(Point(), Radius(), other->Point(), other->Radius());
             break;
 
         case COL_POINT:
-            return CheckCollisionPointCircle(other->Point(), Point(), Radius());
+            //return CheckCollisionPointCircle(other->Point(), Point(), Radius());
             break;
         }
         break;
@@ -209,25 +209,26 @@ CollisionInfo Collider::Info(Collider *other)
         switch (other->type)
         {
         case COL_BOX:
-            return CheckCollisionPointRec(Point(), other->Box());
+            //return CheckCollisionPointRec(Point(), other->Box());
             break;
 
         case COL_SPRITE:
-            return CheckCollisionPointRec(Point(), other->Sprite());
+            //return CheckCollisionPointRec(Point(), other->Sprite());
             break;
 
         case COL_CIRCLE:
-            return CheckCollisionPointCircle(Point(), other->Point(), other->Radius());
+            //return CheckCollisionPointCircle(Point(), other->Point(), other->Radius());
             break;
 
         case COL_POINT:
-            return (bool)Vector2Equals(Point(), other->Point());
+            //return (bool)Vector2Equals(Point(), other->Point());
+            break;
         }
         break;
 
     }
 
-    return false;
+    return info;
 
 }
 

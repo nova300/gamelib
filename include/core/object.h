@@ -2,7 +2,7 @@
 
 #include "core/behaviour.h"
 #include "core/position.h"
-#include "physics/collider.h"
+#include "physics/types.h"
 
 class Program;
 

@@ -24,7 +24,7 @@ struct TileDef
 class TileMap : public Object
 {
 public:
-    void Load(int posX, int posY, std::)
+    void Load(int posX, int posY);
 
 private:
     std::vector<std::shared_ptr<TextureAtlas>> tileGraphics;
