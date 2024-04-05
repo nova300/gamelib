@@ -10,7 +10,7 @@ add_executable(testapp source/games/test.cpp)
 
 find_library(MATH_LIBRARY m)
 if(MATH_LIBRARY)
-    target_link_libraries(application ${MATH_LIBRARY})
+    target_link_libraries(gamelib ${MATH_LIBRARY})
 endif()
 
 target_link_libraries(gamelib raylib)
