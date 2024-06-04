@@ -30,6 +30,8 @@ int main(void)
         EndDrawing();
     }
 
+    ps1.Clear();
+
     CloseWindow();
 
 }
@@ -121,7 +123,7 @@ void TestProgram::Init()
 
     
 
-    AddObject(&player);
+    os.AddObject(&player);
     rq.AddRender(&player);
 
 
@@ -136,10 +138,10 @@ void TestProgram::Init()
 
     UnloadImage(mapimg);
 
-    AddObject(&map);
+    os.AddObject(&map);
     rq.AddRender(&map);
 
-    ProcessNewObjects();
+    os.ProcessNewObjects();
 }
 
 bool TestProgram::FadeIn()
@@ -155,7 +157,7 @@ bool TestProgram::FadeOut()
 void TestProgram::Update(float deltaTime)
 {
     UpdateCameraPlayerBoundsPush(&camera, &player, canvaswidth, canvasheight);
-    UpdateObjects(deltaTime);
+    os.UpdateObjects(deltaTime);
     
 
     if(IsKeyPressed(KEY_F1))
@@ -204,15 +206,20 @@ void TestProgram::SoftRender()
 
 void TestProgram::PostUpdate(float deltaTime)
 {
-    PostUpdateObjects(deltaTime);
+    os.PostUpdateObjects(deltaTime);
 }
 
 void TestProgram::Destroy()
 {
-    RemoveObject(&player);
+    os.RemoveObject(&player);
     rq.RemoveRender(&player);
 
+    os.RemoveObject(&map);
+    rq.RemoveRender(&map);
+
     UnloadRenderTexture(canvas);
+
+    delete this;
 }
 
 

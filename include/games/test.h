@@ -7,7 +7,7 @@
 
 
 
-class TestProgram : public Program, public ObjectStore
+class TestProgram : public Program
 {
 public:
     void Init() override;
@@ -33,6 +33,7 @@ public:
     Object map;
     Camera2D camera;
     RenderQueueSorted2D rq = RenderQueueSorted2D(&camera);
+    ObjectStore os;
 
     
 };

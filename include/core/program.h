@@ -23,7 +23,7 @@ public:
     virtual void PostUpdate(float deltaTime) {};
     virtual void Render() {};
     virtual void SoftRender() {};
-    virtual void Destroy() {};
+    virtual void Destroy() = 0; //call "delete this" at the end of this function, so it frees all inherited members
     virtual void Sleep() {};
     virtual void Wake() {};
 
