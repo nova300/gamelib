@@ -92,6 +92,8 @@ public:
     void SetSprite();
     void SetCircle(Vector2 pos, float radius);
     void SetPoint(Vector2 offset = Vector2Zero());
+    
+    float CheckStep(Vector3 step);
 
 protected:
     Rectangle Box();

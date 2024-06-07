@@ -41,3 +41,8 @@ void Position::Translate(Vector3 vec)
 {
     Translate(vec.x, vec.y, vec.z);
 }
+
+void Position::Translate(Vector2 vec)
+{
+    Translate(vec.x, vec.y);
+}
