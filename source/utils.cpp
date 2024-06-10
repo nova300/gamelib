@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <cstring>
 #include <algorithm>
+#include <math.h>
 
 
 
@@ -34,7 +35,7 @@ Color GetRandomColor()
 
 float sign(float val)
 {
-    if(value < 0) return -1.0f;
+    if(val < 0) return -1.0f;
     return 1.0f;
 }
 
