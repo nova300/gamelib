@@ -9,11 +9,10 @@ class Behaviour
 {
     friend class Object;
 public:
-    Behaviour(Object* OBJ) : object(OBJ) {};
     virtual ~Behaviour() {};
 
-    virtual void Awake() {};
     virtual void Init() {};
+    virtual void Awake() {};
     virtual void Update(float deltaTime) {};
     virtual void PostUpdate(float deltaTime) {};
     virtual void Render() {};
@@ -21,5 +20,5 @@ public:
 
     Object* GetObject();
 protected:
-    Object* object = NULL;
+    Object* object = nullptr;
 };

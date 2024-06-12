@@ -21,7 +21,6 @@ struct SpriteFrame
 class AnimatedSprite : public Behaviour
 {
 public:
-    AnimatedSprite(Object* obj) : Behaviour(obj) {};
     ~AnimatedSprite() {};
     void Update(float deltaTime) override;
     void Render() override;

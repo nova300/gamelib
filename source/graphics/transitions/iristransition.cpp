@@ -78,6 +78,7 @@ bool IrisTransition::FadeIn()
         DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)width, (float)-height}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)width, (float)height}, 50, 50), Vector2Zero(), 0.0f, WHITE);
         return false;
     }
+    intimer = 0.0f;
     return true;
 }
 
@@ -92,5 +93,6 @@ bool IrisTransition::FadeOut()
         DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)width, (float)-height}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)width, (float)height}, 50, 50) , Vector2Zero(), 0.0f, WHITE);
         return false;
     }
+    outtimer = 0.0f;
     return true;
 }

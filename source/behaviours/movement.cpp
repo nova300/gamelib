@@ -2,10 +2,10 @@
 #include "core/object.h"
 #include "stdio.h"
 
-Movement::Movement(Object *obj) : Behaviour(obj)
+void Movement::Init()
 {
-    collider = obj->GetBehaviour<Collider>();
-    if (collider == nullptr)
+    collider = object->GetBehaviour<Collider>();
+    if (!collider.expired())
     {
         printf("MOVEMENT BEHAVIOUR: could not find collider behaviour!\n");
     }
@@ -27,7 +27,7 @@ void Movement::SetVelocity(Vector2 VELOCITY)
     velocity.y = VELOCITY.y;
 }
 
-void Movement::SetCollider(std::shared_ptr<Collider> COLLIDER)
+void Movement::SetCollider(std::weak_ptr<Collider> COLLIDER)
 {
     collider = COLLIDER;
 }
@@ -37,9 +37,10 @@ void Movement::Update(float deltaTime)
 
     Vector3 moveStep = Vector3Scale(velocity, moveSpeed * deltaTime);
 
-    if(collider)
+    auto col = collider.lock();
+    if(col)
     {
-        Vector3Scale(moveStep, collider->CheckStep(moveStep));
+        Vector3Scale(moveStep, col->CheckStep(moveStep));
     }
 
     object->position.Translate(moveStep);

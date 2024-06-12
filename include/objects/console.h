@@ -11,7 +11,7 @@
 #define WIDTH 80
 #define HEIGHT 25
 
-#define PIXEL_WIDTH 720
+#define PIXEL_WIDTH 640
 #define PIXEL_HEIGHT 400
 
 
@@ -62,14 +62,43 @@ public:
     void Init();
     void Render(Color fontColor = WHITE, Color fontPaperColor = BLACK, Color bgColor = BLANK);
     void Draw();
+    void Draw(Rectangle dst);
+    void Draw(float marginX, float marginY);
     std::ostream& GetStream();
 
 private:
     
     Rectangle get_glyph(unsigned char code);
     Texture2D font;
-    ConsoleBuffer buffer;
-    std::ostream stream = std::ostream(&buffer);
+    //ConsoleBuffer buffer;
+    //std::ostream stream = std::ostream(&buffer);
     std::deque<std::string> screenBuffer;
     RenderTexture2D renderTexture;
+};
+
+#include <string>
+#include "core/program.h"
+#include "objects/console.h"
+#include "graphics/transition.h"
+#include "objects/commandproc.h"
+
+class Terminal : public Program
+{
+public:
+    Terminal(CommandProcessor *command);
+    Terminal() {cmd = new CommandProcessor; };
+    ~Terminal() { if(cmd) delete cmd; };
+    void Init() override;
+    void Update(float deltaTime) override;
+    void SoftRender() override;
+    void Render() override;
+
+    FadeTransition trans = FadeTransition(0.5f, DARKBLUE);
+
+    bool FadeIn() { return trans.FadeIn(); };
+    bool FadeOut() { return trans.FadeOut(); };
+
+
+    Console console;
+    CommandProcessor* cmd = nullptr;
 };

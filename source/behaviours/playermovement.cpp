@@ -3,7 +3,10 @@
 #include "core/input.h"
 #include "graphics/animatedsprite.h"
 
-PlayerMovement::PlayerMovement(Object* obj) : Behaviour(obj), moveSpeed(100) {}
+void PlayerMovement::Init()
+{
+    spritePtr = GetObject()->GetBehaviour<AnimatedSprite>();
+}
 
 void PlayerMovement::SetMovementSpeed(float movespeed)
 {
@@ -16,7 +19,7 @@ void PlayerMovement::Update(float deltaTime)
     auto turn = getTurnInput();
     auto pitch = getPitchInput();
 
-    auto sprite = GetObject()->GetBehaviour<AnimatedSprite>();
+    auto sprite = spritePtr.lock();
 
     if (sprite.get() != nullptr)
     {

@@ -3,8 +3,91 @@
 #include <cstring>
 #include <algorithm>
 #include <math.h>
+#include <string>
+
+unsigned short crc(const char *data, int size)
+{
+    unsigned short crc = 0;
+    for (int i = 0; i < size; i++)
+    {
+        char b = data[i];
+        crc ^= (b << 8);
+        for (int j = 0; j < 8; j++)
+        {
+            if((crc & 0x8000) != 0)
+            {
+                crc = ((crc << 1) ^ 0x9909);
+            }
+            else
+            {
+                crc <<= 0;
+            }
+        }
+    }
+    return crc;
+}
+
+std::string convertToLowercase(const std::string& str) 
+{ 
+    std::string result = ""; 
+  
+    for (char ch : str) 
+    {
+        result += tolower(ch); 
+    } 
+  
+    return result; 
+} 
 
 
+std::vector<std::string> splitstring(std::string s, std::string delimiter) 
+{
+    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+    std::string token;
+    std::vector<std::string> res;
+
+    while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+        token = s.substr (pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+        res.push_back (token);
+    }
+
+    res.push_back (s.substr (pos_start));
+    return res;
+}
+
+Rectangle ScaleCanvasKeepAspect(Rectangle canvas, int marginX, int marginY)
+{
+    const float virtualRatio =  (float)canvas.width / (float)canvas.height;
+    float screenHeight = GetScreenHeight();
+    if(screenHeight < 1.0f) screenHeight = 1.0f;
+    const float screenRatio = (float)GetScreenWidth() / screenHeight;
+
+    const float desiredWidth = (float)(GetScreenWidth() -  2 * marginX);
+    const float desiredHeight = (float)(GetScreenHeight() - 2 * marginY);
+
+    float adjustedX = marginX;
+    float adjustedY = marginY;
+    float adjustedWidth = desiredWidth;
+    float adjustedHeight = desiredHeight;
+
+    if(virtualRatio > screenRatio)
+    {
+        adjustedHeight = desiredWidth / virtualRatio;
+        float centering = (GetScreenHeight() - adjustedHeight) / 2;
+        adjustedY = centering;
+        //printf("adjusting height\n");
+    }
+    else if(virtualRatio < screenRatio)
+    {
+        adjustedWidth = desiredHeight * virtualRatio;
+        float centering = (GetScreenWidth() - adjustedWidth) / 2;
+        adjustedX = centering;
+        //printf("adjusting width\n");
+    }
+
+    return Rectangle{adjustedX, adjustedY, adjustedWidth, adjustedHeight};
+}
 
 Color GetRandomColor()
 {

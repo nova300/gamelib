@@ -1,7 +1,12 @@
-#include "console.h"
+#include "objects/console.h"
+#include "core/programstack.h"
+#include "utils.h"
 #include <chrono>
 
 ConsoleScreen bg;
+
+ConsoleBuffer buffer;
+std::ostream stream = std::ostream(&buffer);
 
 void Console::Render(Color fontColor, Color fontPaperColor, Color bgColor)
 {
@@ -16,7 +21,7 @@ void Console::Render(Color fontColor, Color fontPaperColor, Color bgColor)
         {
             for (int j = 0; j <= WIDTH; j++)
             {
-                Rectangle glyph = Rectangle{9.0f * j, 16.0f * i , 9.0f, 16.0f};
+                Rectangle glyph = Rectangle{8.0f * j, 16.0f * i , 8.0f, 16.0f};
                 Rectangle clip  = get_glyph(screenBuffer.data[i][j]);
                 if(screenBuffer.data[i][j]) DrawRectanglePro(glyph, Vector2{0.0,0.0}, 0.0, fontPaperColor);
                 DrawTexturePro(font, clip, glyph, Vector2{0.0f, 0.0f}, 0.0f, fontColor);
@@ -29,6 +34,16 @@ void Console::Render(Color fontColor, Color fontPaperColor, Color bgColor)
 void Console::Draw()
 {
     DrawTexturePro(renderTexture.texture, Rectangle{0.0, 0.0, PIXEL_WIDTH, -PIXEL_HEIGHT}, Rectangle{0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, Vector2{0,0}, 0.0, WHITE);
+}
+
+void Console::Draw(Rectangle dst)
+{
+    DrawTexturePro(renderTexture.texture, Rectangle{0.0, 0.0, PIXEL_WIDTH, -PIXEL_HEIGHT}, dst, Vector2{0,0}, 0.0, WHITE);
+}
+
+void Console::Draw(float marginX, float marginY)
+{
+    DrawTexturePro(renderTexture.texture, Rectangle{0.0, 0.0, PIXEL_WIDTH, -PIXEL_HEIGHT}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)PIXEL_WIDTH, (float)PIXEL_HEIGHT}, marginX, marginY), Vector2{0,0}, 0.0, WHITE);
 }
 
 Rectangle Console::get_glyph(unsigned char code)
@@ -187,6 +202,7 @@ void ConsoleBuffer::NewLineClear()
     if (lineBuffer.size() > HEIGHT) lineBuffer.pop_front();
 }
 
+// 8x16 font, png format
 static const unsigned char font_data[] = {
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
   0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x80,
@@ -502,4 +518,33 @@ void Console::Init()
 std::ostream& Console::GetStream()
 {
     return stream;
+}
+
+void Terminal::Init()
+{
+    console.Init();
+}
+
+void Terminal::Update(float deltaTime)
+{
+
+    auto& stream = console.GetStream();
+
+    cmd->Update(stream, this);
+}
+
+void Terminal::SoftRender()
+{
+    console.Render(WHITE, BLANK);
+}
+
+void Terminal::Render()
+{
+    ClearBackground(DARKBLUE);
+    console.Draw(50, 50);
+}
+
+Terminal::Terminal(CommandProcessor *command)
+{
+    cmd = command;
 }

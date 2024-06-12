@@ -20,6 +20,7 @@ bool FadeTransition::FadeIn()
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), ColorAlpha(color, alpha));
         return false;
     }
+    intimer = 0.0f;
     return true;
 }
 
@@ -27,10 +28,11 @@ bool FadeTransition::FadeOut()
 {
     if(outtimer < time)
     {
-        intimer += GetFrameTime();
-        float alpha = intimer / time;
+        outtimer += GetFrameTime();
+        float alpha = outtimer / time;
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), ColorAlpha(color, alpha));
         return false;
     }
+    outtimer = 0.0f;
     return true;
 }

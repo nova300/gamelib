@@ -3,38 +3,34 @@
 #include <stdio.h>
 #include <typeinfo>
 #include <iostream>
-/*#include <set>
+#include <objects/commandproc.h>
+#include "objects/console.h"
 
-std::set<ProgramStack*> programStacks;
-
-ProgramStack::ProgramStack()
+bool ProgramStack::Stop()
 {
-    programStacks.emplace(this);
+    return stop;
 }
 
-ProgramStack::~ProgramStack()
+int ProgramStack::ProgramsRunning()
 {
-    programStacks.erase(this);
+    return programStack.size();
 }
 
-void ProgramStack::UpdateAll(float deltaTime)
+int ProgramStack::ProgramsCapacity()
 {
-    for(auto stk : programStacks)
-    {
-        stk->Update(deltaTime);
-    }
-}*/
+    return programStack.capacity();
+}
 
-void ProgramStack::Push(Program *program)
-
+void ProgramStack::IPush(Program *program)
 {
+    stop = false;
     if (!programStack.empty()) programStack.back()->active = false;
     programStack.push_back(program);
     program->stack = this;
     program->Init();
 }
 
-void ProgramStack::Pop()
+void ProgramStack::IPop()
 {
     if (programStack.empty()) return;
     Program *top = programStack.back();
@@ -44,14 +40,20 @@ void ProgramStack::Pop()
     if (!programStack.empty()) programStack.back()->active = true;
 }
 
-void ProgramStack::Switch(Program *program)
+void ProgramStack::Push(Program *program)
 {
-    //if(state == FADEOUT) return;
-    std::cout << "PROGRAMSTACK: switching to : " << typeid(*program).name() << std::endl;
+    if(!program)
+    {
+        std::cout << "PROGRAMSTACK: next program is NULL, stopping execution..." << std::endl;
+        nextProgram = NULL;
+        state = STOP;
+        return;
+    }
+    std::cout << "PROGRAMSTACK: pushing to : " << typeid(*program).name() << std::endl;
     if(programStack.empty())
     {
         state = FADEIN;
-        Push(program);
+        IPush(program);
         return;
     }
 
@@ -59,40 +61,62 @@ void ProgramStack::Switch(Program *program)
     state = FADEOUT;
 }
 
+void ProgramStack::Pop()
+{
+    nextProgram = NULL;
+    popnext = true;
+    state = FADEOUT;
+}
+
+void ProgramStack::Switch(Program *program)
+{
+    //if(state == FADEOUT) return;
+    if(!program)
+    {
+        std::cout << "PROGRAMSTACK: next program is NULL, stopping execution..." << std::endl;
+        nextProgram = NULL;
+        state = STOP;
+        return;
+    }
+    std::cout << "PROGRAMSTACK: switching to : " << typeid(*program).name() << std::endl;
+    if(programStack.empty())
+    {
+        state = FADEIN;
+        IPush(program);
+        return;
+    }
+
+    nextProgram = program;
+    popnext = true;
+    state = FADEOUT;
+}
+
 void ProgramStack::Update(float deltaTime)
 {
     if(programStack.empty()) return;
 
-
-    if (state != FADEOUT) // dont update if fading out
+    if (state != FADEOUT || state != STOP) // dont update if fading out
     {
-        for (auto &p : programStack)
-        {
-            p->Update(deltaTime);
-        }
-
-        for (auto &p : programStack)
-        {
-            p->PostUpdate(deltaTime);
-        }
+        GetTop()->Update(deltaTime);
+        GetTop()->PostUpdate(deltaTime);
     } 
 
+    GetTop()->SoftRender();
 
-    for(auto& p : programStack)
+    for (auto &p : programStack)
     {
-        p->SoftRender();
+        p->ConstantUpdate(deltaTime);
     }
 
 }
 
 void ProgramStack::Render()
 {
-    if(programStack.empty()) return;
-
-    /*for(auto& p : programStack)
+    if(programStack.empty())
     {
-        p->Render();
-    }*/
+        if(state == STOP) stop = true;
+        return;
+    }
 
     GetTop()->Render();
 
@@ -107,17 +131,40 @@ void ProgramStack::Render()
         break;
     
     case FADEOUT:
-        if(nextProgram == NULL) 
-        {
-            state = NORMAL;
-            printf("PROGRAMSTACK: FADEOUT set but no program is set to next");
-        }
         if(GetTop()->FadeOut())
         {
             printf("PROGRAMSTACK: fadeout done\n");
-            Pop();
+
+            if(popnext)
+            {
+                IPop();
+                popnext = false;
+            }
+
             state = FADEIN;
-            Push(nextProgram);
+            
+            if(nextProgram == NULL) 
+            {
+                if(programStack.empty())
+                {
+                    printf("PROGRAMSTACK: cant find next program, Goodbye!\n");
+                    state = STOP;
+                    stop = true;
+                }
+            }
+            else
+            {
+                IPush(nextProgram);
+                nextProgram = NULL;
+            }
+        }
+        break;
+
+    case STOP:
+        if(GetTop()->FadeOut())
+        {
+            IPop();
+            stop = true;
         }
         break;
     }
@@ -134,14 +181,15 @@ void ProgramStack::Clear()
 {
     while (!programStack.empty())
     {
-        Pop();
+        IPop();
     }
 }
 
-void ProgramStack::Reload(Program *start)
+void ProgramStack::Reload()
 {
-    clear = true;
-    nextProgram = start;
+    popnext = true;
+    nextProgram = NULL;
+    state = FADEOUT;
 }
 
 void ProgramStack::Clean()

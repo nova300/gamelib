@@ -81,6 +81,7 @@ bool SquareTransition::FadeIn()
         DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)width, (float)-height}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)width, (float)height}, 30, 20), Vector2Zero(), 0.0f, WHITE);
         return false;
     }
+    intimer = 0.0f;
     return true;
 }
 
@@ -97,5 +98,6 @@ bool SquareTransition::FadeOut()
         DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)width, (float)-height}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)width, (float)height}, 30, 20) , Vector2Zero(), 0.0f, WHITE);
         return false;
     }
+    outtimer = 0.0f;
     return true;
 }

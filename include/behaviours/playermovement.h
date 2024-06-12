@@ -2,6 +2,8 @@
 
 #include "core/behaviour.h"
 #include <raylib.h>
+#include <memory>
+#include "graphics/animatedsprite.h"
 
 enum PlayerAnimations
 {
@@ -25,14 +27,15 @@ public:
         LEFT,
         RIGHT
     };
-    PlayerMovement(Object* obj);
     ~PlayerMovement() {};
 
     void SetMovementSpeed(float moveSpeed);
 
     void Update(float deltaTime) override;
+    void Init() override;
 
 private:
-    float moveSpeed;
+    float moveSpeed = 100.0f;
     Direction dir = DOWN;
+    std::weak_ptr<AnimatedSprite> spritePtr;
 };

@@ -27,6 +27,7 @@ public:
     virtual void Destroy() {};
     virtual void Sleep() {};
     virtual void Wake() {};
+    virtual void ConstantUpdate(float deltaTime) {};
 
     virtual bool FadeIn() {return true;}
     virtual bool FadeOut() {return true;}

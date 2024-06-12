@@ -42,10 +42,10 @@ public:
     void Visible(bool value);
 
     template<typename T>
-    std::shared_ptr<T> AddBehaviour();
+    std::weak_ptr<T> AddBehaviour();
     
     template<typename T> 
-    std::shared_ptr<T> GetBehaviour();
+    std::weak_ptr<T> GetBehaviour();
 
     template<class T>
     void RemoveBehaviour();
@@ -58,35 +58,38 @@ protected:
 
 
 template <typename T>
-std::shared_ptr<T> Object::AddBehaviour()
+std::weak_ptr<T> Object::AddBehaviour()
 {
     static_assert(std::is_base_of<Behaviour, T>::value, "T is not a component");
     for(auto& b : behaviours)
     {
-        if(std::dynamic_pointer_cast<T>(b))
+        auto ptr = std::dynamic_pointer_cast<T>(b);
+        if(ptr)
         {
-            return std::dynamic_pointer_cast<T>(b);
+            return ptr;
         }
     }
 
-    std::shared_ptr<T> newBehaviour = std::make_shared<T>(this);
+    std::shared_ptr<T> newBehaviour = std::make_shared<T>();
     newBehaviour->object = this;
     behaviours.push_back(newBehaviour);
+    newBehaviour->Init();
 
     return newBehaviour;
 }
 
 template <typename T>
-std::shared_ptr<T> Object::GetBehaviour()
+std::weak_ptr<T> Object::GetBehaviour()
 {
     for(auto& b : behaviours)
     {
-        if(std::dynamic_pointer_cast<T>(b))
+        auto ptr = std::dynamic_pointer_cast<T>(b);
+        if(ptr)
         {
-            return std::dynamic_pointer_cast<T>(b);
+            return ptr;
         }
     }
-    return nullptr;
+    return {}; //looks weird, returns empty weak_ptr
 }
 
 template <typename T>

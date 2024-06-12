@@ -5,23 +5,25 @@
 #include "behaviours/playermovement.h"
 #include "graphics/animatedsprite.h"
 #include "graphics/textureatlas.h"
-
+#include "utils.h"
+#include "objects/commandproc.h"
+#include "objects/debugconsole.h"
 
 #include <raylib.h>
 #include <raymath.h>
 
 int main(void)
 {
-
+    DebugConsole::RegisterPrograms();
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1024, 738, "LibGame V.2");
-    //SetTargetFPS(60);
+    SetTargetFPS(60);
 
     ProgramStack ps1;
-    ps1.Switch(new TestProgram());
+    ps1.Switch(new TestProgram);
 
 
-    while(!WindowShouldClose())
+    while(!WindowShouldClose() && !ps1.Stop())
     {
         ps1.Update(GetFrameTime());
 
@@ -36,42 +38,7 @@ int main(void)
 
 }
 
-static Rectangle ScaleCanvasKeepAspect(Rectangle canvas, int marginX, int marginY)
-{
-    const float virtualRatio =  (float)canvas.width / (float)canvas.height;
-    float screenHeight = GetScreenHeight();
-    if(screenHeight < 1.0f) screenHeight = 1.0f;
-    const float screenRatio = (float)GetScreenWidth() / screenHeight;
-
-    const float desiredWidth = (float)(GetScreenWidth() -  2 * marginX);
-    const float desiredHeight = (float)(GetScreenHeight() - 2 * marginY);
-
-    float adjustedX = marginX;
-    float adjustedY = marginY;
-    float adjustedWidth = desiredWidth;
-    float adjustedHeight = desiredHeight;
-
-    if(virtualRatio > screenRatio)
-    {
-        adjustedHeight = desiredWidth / virtualRatio;
-        float centering = (GetScreenHeight() - adjustedHeight) / 2;
-        adjustedY = centering;
-        //printf("adjusting height\n");
-    }
-    else if(virtualRatio < screenRatio)
-    {
-        adjustedWidth = desiredHeight * virtualRatio;
-        float centering = (GetScreenWidth() - adjustedWidth) / 2;
-        adjustedX = centering;
-        //printf("adjusting width\n");
-    }
-
-    return Rectangle{adjustedX, adjustedY, adjustedWidth, adjustedHeight};
-}
-
-
-
-void UpdateCameraPlayerBoundsPush(Camera2D *camera, Object *player, int width, int height)
+static void UpdateCameraPlayerBoundsPush(Camera2D *camera, Object *player, int width, int height)
 {
     static Vector2 bbox = { 0.2f, 0.2f };
 
@@ -90,7 +57,7 @@ void TestProgram::Init()
     canvas = LoadRenderTexture(canvaswidth, canvasheight);
     TextureAtlas atlas = TextureAtlas(std::string("player.png"), 32, 32);
 
-    auto sprite = player.AddBehaviour<AnimatedSprite>();
+    auto sprite = player.AddBehaviour<AnimatedSprite>().lock();
     
     sprite->PushFrame(PlayerAnimations::DOWN, atlas.GetSpriteFrame(1));
 
@@ -128,7 +95,7 @@ void TestProgram::Init()
 
 
 
-    auto mapsprite = map.AddBehaviour<Sprite>();
+    auto mapsprite = map.AddBehaviour<Sprite>().lock();
 
     auto mapimg = GenImageChecked(2000, 2000, 16, 16, GREEN, DARKGREEN);
 
@@ -162,7 +129,21 @@ void TestProgram::Update(float deltaTime)
 
     if(IsKeyPressed(KEY_F1))
     {
-        GetStack()->Switch(new TestProgram());
+        GetStack()->Switch(new Terminal(new CmdMessage(std::string("ERROR: INFINITE LOOP\n"))));
+    }
+    if(IsKeyPressed(KEY_F2))
+    {
+        std::string alpha;
+        for(unsigned char c; c < 255; c++)
+        {
+            alpha.push_back(c);
+        }
+        alpha.push_back(255);
+        GetStack()->Push(new Terminal(new CmdMessage(alpha)));
+    }
+    if(IsKeyPressed(KEY_F3))
+    {
+        GetStack()->Push(new Terminal(new DebugConsole()));
     }
 }
 
