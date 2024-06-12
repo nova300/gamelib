@@ -10,6 +10,7 @@ class Behaviour
     friend class Object;
 public:
     Behaviour(Object* OBJ) : object(OBJ) {};
+    virtual ~Behaviour() {};
 
     virtual void Awake() {};
     virtual void Init() {};

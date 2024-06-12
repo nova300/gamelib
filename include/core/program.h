@@ -18,12 +18,13 @@ class Program
 {
     friend class ProgramStack;
 public:
+    virtual ~Program() {};
     virtual void Init() {};
     virtual void Update(float deltaTime) {};
     virtual void PostUpdate(float deltaTime) {};
     virtual void Render() {};
     virtual void SoftRender() {};
-    virtual void Destroy() = 0; //call "delete this" at the end of this function, so it frees all inherited members
+    virtual void Destroy() {};
     virtual void Sleep() {};
     virtual void Wake() {};
 

@@ -10,6 +10,7 @@
 class TestProgram : public Program
 {
 public:
+    ~TestProgram() {};
     void Init() override;
     void Update(float deltaTime) override;
     void PostUpdate(float deltaTime) override;

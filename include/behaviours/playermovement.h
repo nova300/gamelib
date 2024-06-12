@@ -26,6 +26,7 @@ public:
         RIGHT
     };
     PlayerMovement(Object* obj);
+    ~PlayerMovement() {};
 
     void SetMovementSpeed(float moveSpeed);
 

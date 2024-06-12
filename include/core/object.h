@@ -12,6 +12,7 @@ class Object
 {
 public:
     //overridable update and render methods
+    virtual ~Object() {};
     virtual void Awake() {};
     virtual void Init() {};
     virtual void Update(float deltaTime) {};

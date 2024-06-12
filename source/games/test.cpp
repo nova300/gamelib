@@ -218,8 +218,6 @@ void TestProgram::Destroy()
     rq.RemoveRender(&map);
 
     UnloadRenderTexture(canvas);
-
-    delete this;
 }
 
 

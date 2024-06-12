@@ -9,6 +9,7 @@ class Sprite : public Behaviour
 {
 public:
     Sprite(Object* obj) : Behaviour(obj) {};
+    ~Sprite() {};
     void Load(std::shared_ptr<CTexture> tex);
     void Load(std::string path);
     void Load(Texture2D texture);

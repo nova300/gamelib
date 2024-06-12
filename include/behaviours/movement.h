@@ -11,6 +11,7 @@ class Movement : public Behaviour
 {
 public:
     Movement(Object* obj);
+    ~Movement() {};
 
     void SetMovementSpeed(float moveSpeed);
     void SetVelocity(Vector3 velocity);

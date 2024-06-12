@@ -88,6 +88,7 @@ class Collider : public Behaviour
 {
     friend class ColliderSet;
 public:
+    ~Collider() {};
     void SetBox(Rectangle bounds);
     void SetSprite();
     void SetCircle(Vector2 pos, float radius);

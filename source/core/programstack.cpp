@@ -39,6 +39,7 @@ void ProgramStack::Pop()
     if (programStack.empty()) return;
     Program *top = programStack.back();
     top->Destroy();
+    delete top;
     programStack.pop_back();
     if (!programStack.empty()) programStack.back()->active = true;
 }
