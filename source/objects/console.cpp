@@ -21,7 +21,7 @@ void Console::Render(Color fontColor, Color fontPaperColor, Color bgColor)
         {
             for (int j = 0; j <= WIDTH; j++)
             {
-                Rectangle glyph = Rectangle{8.0f * j, 16.0f * i , 8.0f, 16.0f};
+                Rectangle glyph = Rectangle{10.0f * j, 16.0f * i , 8.0f, 16.0f};
                 Rectangle clip  = get_glyph(screenBuffer.data[i][j]);
                 if(screenBuffer.data[i][j]) DrawRectanglePro(glyph, Vector2{0.0,0.0}, 0.0, fontPaperColor);
                 DrawTexturePro(font, clip, glyph, Vector2{0.0f, 0.0f}, 0.0f, fontColor);
@@ -535,7 +535,7 @@ void Terminal::Update(float deltaTime)
 
 void Terminal::SoftRender()
 {
-    console.Render(WHITE, BLANK);
+    console.Render(WHITE, DARKBLUE);
 }
 
 void Terminal::Render()
