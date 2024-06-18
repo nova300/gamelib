@@ -17,3 +17,5 @@ private:
 std::shared_ptr<CTexture> CLoadTexture(std::string path);
 
 std::shared_ptr<CTexture> CLoadTexture(Image img);
+
+void SetPackedTexturePtr(unsigned char* data, int dataSize, const char* path);

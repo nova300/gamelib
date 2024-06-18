@@ -12,9 +12,13 @@ class CommandProcessor
 {
 public:
     virtual void Update(std::ostream& stream, Program *prg);
-    virtual std::string CmdName() { return std::string("LIBGAME V.2\nCOPYRIGHT 2024 M.FAGERSTROM\n"); }
-    virtual std::string CmdPrompt() { return std::string("> "); }
-    virtual std::string RunCommand(std::string command, Program *prg) { return std::string("NO INTERPRETER\n") + CmdPrompt(); };
+    virtual std::string CmdName() { return std::string("** UNDEFINED CMD **\n"); }
+    virtual std::string CmdPrompt() { return std::string("ERROR: no command processor defined\n ** Press ENTER to continue ** "); };
+    virtual std::string RunCommand(std::string command, Program *prg) 
+    { 
+        prg->GetStack()->Pop();
+        return std::string("\n") + CmdPrompt(); 
+    };
     virtual ~CommandProcessor() {};
 
 private:
@@ -30,7 +34,7 @@ private:
 public:
     CmdMessage(std::string msg) { text = msg; };
     std::string CmdName() { return text; };
-    std::string CmdPrompt() { return std::string("\n-- PRESS ENTER TO EXIT --"); };
+    std::string CmdPrompt() { return std::string("\n ** Press ENTER to continue ** "); };
     std::string RunCommand(std::string command, Program *prg) override;
 };
 

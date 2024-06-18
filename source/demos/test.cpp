@@ -1,5 +1,5 @@
 #include "graphics/renderqueue.h"
-#include "games/test.h"
+#include "demos/test.h"
 #include "graphics/sprite.h"
 #include "core/programstack.h"
 #include "behaviours/playermovement.h"
@@ -8,9 +8,12 @@
 #include "utils.h"
 #include "objects/commandproc.h"
 #include "objects/debugconsole.h"
+#include "graphics/texturecache.h"
 
 #include <raylib.h>
 #include <raymath.h>
+
+#include "player.png.inc.c"
 
 int main(void)
 {
@@ -18,6 +21,8 @@ int main(void)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1024, 738, "LibGame V.2");
     SetTargetFPS(60);
+
+    SetPackedTexturePtr(PLAYER_PNG_DATA, PLAYER_PNG_DATA_SIZE, PLAYER_PNG_DATA_PATH);
 
     ProgramStack ps1;
     ps1.Switch(new TestProgram);

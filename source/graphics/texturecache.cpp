@@ -2,6 +2,25 @@
 #include <map>
 #include <memory>
 
+struct TexturePtrEntry
+{
+    unsigned char* data = nullptr;
+    int dataSize = 0;
+
+};
+
+std::map<std::string, TexturePtrEntry> packedTexturePointers;
+
+void SetPackedTexturePtr(unsigned char* data, int dataSize, const char* path)
+{
+    TexturePtrEntry entry;
+    entry.data = data;
+    entry.dataSize = dataSize;
+
+    std::string entrypath = path;
+    packedTexturePointers.emplace(entrypath, entry);
+}
+
 struct TextureCacheEntry
 {
     TextureCacheEntry(Texture2D TEXTURE,int COUNT = 1) : texture(TEXTURE), count(COUNT) 
@@ -46,7 +65,19 @@ std::shared_ptr<CTexture> CLoadTexture(Image img)
 
 CTexture::CTexture(std::string path)
 {
-    texture = LoadTexture(path.c_str());
+    if (packedTexturePointers.count(path) == 0)
+    {
+        texture = LoadTexture(path.c_str());
+    }
+    else
+    {
+        TexturePtrEntry entry = packedTexturePointers.at(path);
+        int dataSize = 0;
+        unsigned char* data = DecompressData(entry.data, entry.dataSize, &dataSize);
+        auto img = LoadImageFromMemory(GetFileExtension(path.c_str()), data, dataSize);
+        texture = LoadTextureFromImage(img);
+        UnloadImage(img);
+    }
 }
 
 CTexture::CTexture(Image img)

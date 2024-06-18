@@ -4,9 +4,12 @@
 #include <algorithm>
 #include <raylib.h>
 
-static bool compareByZ(const Object *a, const Object *b)
+static bool compareByZ(const std::weak_ptr<Object> a, const std::weak_ptr<Object> b)
 {
-    return a->position.z < b->position.z;
+    auto c = a.lock();
+    auto d = b.lock();
+    if(c == nullptr || d == nullptr) return false;
+    return c->position.z < d->position.z;
 }
 
 void RenderQueueSorted2D::PreRender()

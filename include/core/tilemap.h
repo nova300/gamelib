@@ -4,27 +4,24 @@
 #include <vector>
 #include <memory>
 
+#include "utils.h"
 #include "core/object.h"
 #include "graphics/textureatlas.h"
 
-struct TileMapData
+struct Tile
 {
-    
+    bool solid = false;
+    Rectangle src;
+    std::shared_ptr<CTexture> texture;
+    Color color = BLACK;
 };
 
-struct TileDef
-{
-    int id;
-    int gfxId;
-    bool solid;
-
-};
-
-
-class TileMap : public Object
+class TileMap : public Map2D<Tile>
 {
 public:
-    void Load(int posX, int posY);
+
+    void Update(float deltaTime);
+    void Render();
 
 private:
     std::vector<std::shared_ptr<TextureAtlas>> tileGraphics;

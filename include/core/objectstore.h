@@ -9,6 +9,7 @@ class ObjectStore
 {
 public:
     void AddObject(Object* obj);
+    void AddObject(std::shared_ptr<Object> obj);
     void RemoveObject(Object* obj);
 
     void UpdateObjects(float deltaTime);
@@ -19,5 +20,7 @@ public:
 private:
     std::vector<Object*> objects;
     std::vector<Object*> newObjects;
+    std::vector<std::weak_ptr<Object>> objects_ptr;
+    std::vector<std::shared_ptr<Object>> newObjects_ptr;
 
 };

@@ -7,9 +7,6 @@
 #include <sstream>
 #include "core/programstack.h"
 
-#include "games/cmd.h"
-#include "games/test.h"
-
 #include <map>
 #include <string>
 
@@ -52,11 +49,7 @@ factory g_factory;
 
 #define REGISTER_CLASS(n) g_factory.register_class<n>(#n)
 
-void DebugConsole::RegisterPrograms()
-{
-    REGISTER_CLASS(Terminal);
-    REGISTER_CLASS(TestProgram);
-}
+#include "config/programregister.inc.c"
 
 std::string DebugConsole::RunCommand(std::string command, Program *prg)
 {
