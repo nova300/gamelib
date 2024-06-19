@@ -10,36 +10,29 @@ class Program;
 
 class Object
 {
+friend class Program;
 public:
     //overridable update and render methods
     virtual ~Object() {};
-    virtual void Awake() {};
     virtual void Init() {};
     virtual void Update(float deltaTime) {};
     virtual void PostUpdate(float deltaTime) {};
     virtual void Render() {};
-    virtual void OnCollision(CollisionInfo info) {};
 
-    void AwakeBehaviours();
-    void InitBehaviours();
-    void UpdateBehaviours(float deltaTime);
-    void PostUpdateBehaviours(float deltaTime);
-    void RenderBehaviours();
-    void OnCollisionBehaviours(CollisionInfo info);
-
-    std::vector<CollisionShape> GetColliders();
-
-    //std::vector<Rectangle> GetCollisionRects();
-    //std::vector<Vector3> GetCollisionCircles();
-    //std::vector<Vector2> GetCollisionPoints();
-
+    //common data
     Position position;
 
-    //active / visible getters and setters
-    bool Active();
-    bool Visible();
-    void Active(bool value);
-    void Visible(bool value);
+    //node tree
+    template<typename T>
+    std::weak_ptr<T> AddChild();
+
+    std::weak_ptr<Object> AddChild()
+    {
+        return AddChild<Object>();
+    }
+
+    void AddChild(std::shared_ptr<Object> obj);
+    void RemoveChild(std::shared_ptr<Object> obj);
 
     template<typename T>
     std::weak_ptr<T> AddBehaviour();
@@ -51,10 +44,35 @@ public:
     void RemoveBehaviour();
 
 protected:
+    virtual void UpdateInternal(float deltaTime);
+    virtual void PostUpdateInternal(float deltaTime);
+    virtual void RenderInternal();
+    void UpdateWorldPos(void);
+
+    //behaviour data
     std::vector<std::shared_ptr<Behaviour>> behaviours;
-    bool active = true;
-    bool visible = true;
+    std::vector<std::shared_ptr<Behaviour>> newbehaviours;
+
+    //node tree data
+    std::vector<std::shared_ptr<Object>> childObjects;
+    std::vector<std::shared_ptr<Object>> newchildObjects;
+    Object* parent = nullptr;
+    int level = 0;
+
 };
+
+
+template <typename T>
+std::weak_ptr<T> Object::AddChild()
+{
+    static_assert(std::is_base_of<Object, T>::value, "T is not a object");
+
+    std::shared_ptr<T> newObject = std::make_shared<T>();
+    newObject->parent = this;
+    newchildObjects.push_back(newObject);
+
+    return newObject;
+}
 
 
 template <typename T>
@@ -73,7 +91,6 @@ std::weak_ptr<T> Object::AddBehaviour()
     std::shared_ptr<T> newBehaviour = std::make_shared<T>();
     newBehaviour->object = this;
     behaviours.push_back(newBehaviour);
-    newBehaviour->Init();
 
     return newBehaviour;
 }

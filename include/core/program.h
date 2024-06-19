@@ -35,10 +35,6 @@ public:
     ProgramStack* GetStack();
 private:
     ProgramStack* stack = NULL;
-    bool active = false;
 protected:
-    bool Active()
-    {
-        return active;
-    }
+    Object root;
 };

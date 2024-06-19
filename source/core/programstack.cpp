@@ -24,10 +24,7 @@ int ProgramStack::ProgramsCapacity()
 void ProgramStack::IPush(Program *program)
 {
     stop = false;
-    if (!programStack.empty()) programStack.back()->active = false;
     programStack.push_back(program);
-    program->stack = this;
-    program->Init();
 }
 
 void ProgramStack::IPop()
@@ -37,7 +34,6 @@ void ProgramStack::IPop()
     top->Destroy();
     delete top;
     programStack.pop_back();
-    if (!programStack.empty()) programStack.back()->active = true;
 }
 
 void ProgramStack::Push(Program *program)
@@ -53,11 +49,15 @@ void ProgramStack::Push(Program *program)
     if(programStack.empty())
     {
         state = FADEIN;
+        program->stack = this;
+        program->Init();  
         IPush(program);
         return;
     }
 
     nextProgram = program;
+    program->stack = this;
+    program->Init();   
     state = FADEOUT;
 }
 
@@ -82,11 +82,15 @@ void ProgramStack::Switch(Program *program)
     if(programStack.empty())
     {
         state = FADEIN;
+        program->stack = this;
+        program->Init(); 
         IPush(program);
         return;
     }
 
     nextProgram = program;
+    program->stack = this;
+    program->Init(); 
     popnext = true;
     state = FADEOUT;
 }
@@ -98,7 +102,10 @@ void ProgramStack::Update(float deltaTime)
     if (state != FADEOUT || state != STOP) // dont update if fading out
     {
         GetTop()->Update(deltaTime);
+        GetTop()->root.Update(deltaTime);
         GetTop()->PostUpdate(deltaTime);
+        GetTop()->root.PostUpdate(deltaTime);
+        
     } 
 
     GetTop()->SoftRender();
