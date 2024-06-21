@@ -22,7 +22,7 @@ void Console::Render(Color fontColor, Color fontPaperColor, Color bgColor)
             for (int j = 0; j < WIDTH; j++)
             {
                 Rectangle clip  = get_glyph(screenBuffer.data[i][j]);
-                Rectangle glyph = Rectangle{16 * j, 32 * i , 16, 32};
+                Rectangle glyph = Rectangle{16.0f * j, 32.0f * i , 16, 32};
                 if(screenBuffer.data[i][j]) DrawRectanglePro(glyph, Vector2{0.0,0.0}, 0.0, fontPaperColor);
                 DrawTexturePro(font, clip, glyph, Vector2{0.0f, 0.0f}, 0.0f, fontColor);
             }
