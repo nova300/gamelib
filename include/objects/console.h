@@ -11,8 +11,8 @@
 #define WIDTH 80
 #define HEIGHT 25
 
-#define PIXEL_WIDTH 800
-#define PIXEL_HEIGHT 400
+#define PIXEL_WIDTH 1280
+#define PIXEL_HEIGHT 800
 
 
 struct ConsoleScreen

@@ -11,13 +11,15 @@ class Program;
 class Object
 {
 friend class Program;
+friend class RenderQueue;
+friend class ProgramStack;
 public:
     //overridable update and render methods
     virtual ~Object() {};
     virtual void Init() {};
     virtual void Update(float deltaTime) {};
     virtual void PostUpdate(float deltaTime) {};
-    virtual void Render() {};
+    //virtual void Render() {};
 
     //common data
     Position position;
@@ -46,7 +48,7 @@ public:
 protected:
     virtual void UpdateInternal(float deltaTime);
     virtual void PostUpdateInternal(float deltaTime);
-    virtual void RenderInternal();
+    //virtual void RenderInternal();
     void UpdateWorldPos(void);
 
     //behaviour data
@@ -57,8 +59,14 @@ protected:
     std::vector<std::shared_ptr<Object>> childObjects;
     std::vector<std::shared_ptr<Object>> newchildObjects;
     Object* parent = nullptr;
+    Program* program = nullptr;
     int level = 0;
 
+public:
+    Program* GetProgram()
+    {
+        return program;
+    }
 };
 
 
@@ -68,6 +76,7 @@ std::weak_ptr<T> Object::AddChild()
     static_assert(std::is_base_of<Object, T>::value, "T is not a object");
 
     std::shared_ptr<T> newObject = std::make_shared<T>();
+    newObject->program = program;
     newObject->parent = this;
     newchildObjects.push_back(newObject);
 
@@ -90,7 +99,7 @@ std::weak_ptr<T> Object::AddBehaviour()
 
     std::shared_ptr<T> newBehaviour = std::make_shared<T>();
     newBehaviour->object = this;
-    behaviours.push_back(newBehaviour);
+    newbehaviours.push_back(newBehaviour);
 
     return newBehaviour;
 }
@@ -99,6 +108,14 @@ template <typename T>
 std::weak_ptr<T> Object::GetBehaviour()
 {
     for(auto& b : behaviours)
+    {
+        auto ptr = std::dynamic_pointer_cast<T>(b);
+        if(ptr)
+        {
+            return ptr;
+        }
+    }
+    for(auto& b : newbehaviours)
     {
         auto ptr = std::dynamic_pointer_cast<T>(b);
         if(ptr)

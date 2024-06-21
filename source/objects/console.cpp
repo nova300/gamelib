@@ -17,12 +17,12 @@ void Console::Render(Color fontColor, Color fontPaperColor, Color bgColor)
 
         ClearBackground(bgColor);
 
-        for (int i = 0; i <= HEIGHT; i++)
+        for (int i = 0; i < HEIGHT; i++)
         {
-            for (int j = 0; j <= WIDTH; j++)
+            for (int j = 0; j < WIDTH; j++)
             {
-                Rectangle glyph = Rectangle{10.0f * j, 16.0f * i , 8.0f, 16.0f};
                 Rectangle clip  = get_glyph(screenBuffer.data[i][j]);
+                Rectangle glyph = Rectangle{16 * j, 32 * i , 16, 32};
                 if(screenBuffer.data[i][j]) DrawRectanglePro(glyph, Vector2{0.0,0.0}, 0.0, fontPaperColor);
                 DrawTexturePro(font, clip, glyph, Vector2{0.0f, 0.0f}, 0.0f, fontColor);
             }
@@ -64,11 +64,11 @@ ConsoleScreen ConsoleBuffer::GetScreen()
     int w = 0;
     for (auto s : lineBuffer)
     {
-        if (h >= HEIGHT) continue;
+        if (h > HEIGHT) continue;
         w = 0;
         for (auto c : s)
         {
-            if (w >= WIDTH) continue;
+            if (w > WIDTH) continue;
             screenBuffer.data[h][w] = c;
             w++;
         }
@@ -101,7 +101,7 @@ void ConsoleBuffer::SyncThread(ConsoleBuffer *ptr)
                 
                 ptr->threadFree = true;
                 count++;
-                if (count >= max) ptr->init = true;
+                if (count > max) ptr->init = true;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
@@ -510,6 +510,7 @@ static const unsigned int font_len = 3589;
 void Console::Init()
 {
     renderTexture = LoadRenderTexture(PIXEL_WIDTH, PIXEL_HEIGHT);
+    SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
     auto img = LoadImageFromMemory(".png", (const unsigned char*)&font_data, font_len);
     font = LoadTextureFromImage(img);
     UnloadImage(img);

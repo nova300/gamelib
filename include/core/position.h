@@ -8,6 +8,7 @@ namespace Engine
     struct Transform
     {
         Vector3 position = Vector3Zero();
+        Vector3 size = Vector3Zero();
         Vector3 rotation = Vector3Zero();
         Vector3 scale = Vector3One();
 

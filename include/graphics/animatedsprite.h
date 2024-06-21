@@ -18,12 +18,18 @@ struct SpriteFrame
     std::shared_ptr<CTexture> tex;
 };
 
-class AnimatedSprite : public Behaviour
+class AnimatedSprite : public Behaviour, public GeoObject
 {
 public:
     ~AnimatedSprite() {};
     void Update(float deltaTime) override;
+    
     void Render() override;
+    void Init() override;
+    virtual Position* GetPos()
+    {
+        return &GetObject()->position;
+    }
 
     void PushFrame(int animationID, SpriteFrame frame);
     void Play(int animationID);

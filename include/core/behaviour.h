@@ -14,7 +14,7 @@ public:
     virtual void Init() {};
     virtual void Update(float deltaTime) {};
     virtual void PostUpdate(float deltaTime) {};
-    virtual void Render() {};
+    //virtual void Render() {};
 
     Object* GetObject();
 protected:

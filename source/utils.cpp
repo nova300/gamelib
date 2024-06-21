@@ -59,12 +59,12 @@ std::vector<std::string> splitstring(std::string s, std::string delimiter)
 Rectangle ScaleCanvasKeepAspect(Rectangle canvas, int marginX, int marginY)
 {
     const float virtualRatio =  (float)canvas.width / (float)canvas.height;
-    float screenHeight = GetScreenHeight();
+    float screenHeight = GetScreenHeight() - (2 * marginY);
     if(screenHeight < 1.0f) screenHeight = 1.0f;
-    const float screenRatio = (float)GetScreenWidth() / screenHeight;
+    const float screenRatio = (float)(GetScreenWidth() - (2 * marginX)) / screenHeight;
 
-    const float desiredWidth = (float)(GetScreenWidth() -  2 * marginX);
-    const float desiredHeight = (float)(GetScreenHeight() - 2 * marginY);
+    const float desiredWidth = (float)(GetScreenWidth() -  (2 * marginX));
+    const float desiredHeight = (float)(GetScreenHeight() - (2 * marginY));
 
     float adjustedX = marginX;
     float adjustedY = marginY;

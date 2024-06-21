@@ -20,6 +20,7 @@ void Object::AddChild(std::shared_ptr<Object> obj)
     }
 
     //attach object
+    obj->program = program;
     obj->parent = this;
     obj->level = level + 1;
 
@@ -61,6 +62,7 @@ void Object::UpdateWorldPos()
         outp.position = Vector3Add(outp.position, position.local.position);
         outp.rotation = Vector3Add(outp.rotation, position.local.rotation);
         outp.scale = Vector3Multiply(outp.scale, position.local.scale);
+        outp.size = position.local.size;
         position.world = outp;
     }
     else
@@ -71,6 +73,7 @@ void Object::UpdateWorldPos()
 
 void Object::UpdateInternal(float deltaTime)
 {
+    UpdateWorldPos();
     if(newbehaviours.size() > 0)
     {
         for(const auto o : newbehaviours)
@@ -111,6 +114,7 @@ void Object::UpdateInternal(float deltaTime)
 
 void Object::PostUpdateInternal(float deltaTime)
 {
+    UpdateWorldPos();
 //self
     PostUpdate(deltaTime);
     for(auto& b : behaviours)
@@ -125,7 +129,7 @@ void Object::PostUpdateInternal(float deltaTime)
     }
 }
 
-void Object::RenderInternal()
+/*void Object::RenderInternal()
 {
     Render();
     for(auto& b : behaviours)
@@ -133,4 +137,4 @@ void Object::RenderInternal()
         b->Render();
     }
 
-}
+}*/

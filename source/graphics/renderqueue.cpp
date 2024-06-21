@@ -4,7 +4,7 @@
 void RenderQueue::DrawRender()
 {
     PreRender();
-    for(std::vector<std::weak_ptr<Object>>::iterator it = objects.begin(); it != objects.end();)
+    for(std::vector<std::weak_ptr<GeoObject>>::iterator it = objects.begin(); it != objects.end();)
     {
 	    if(it->expired())
 	    {
@@ -14,20 +14,20 @@ void RenderQueue::DrawRender()
 	    {
 	    	auto obj = it->lock();
             obj->Render();
-            obj->RenderBehaviours();
+			it++;
 	    }
     }
     PostRender();
 }
 
-void RenderQueue::AddRender(std::shared_ptr<Object> obj)
+void RenderQueue::AddRender(std::shared_ptr<GeoObject> obj)
 {
     objects.push_back(obj);
 }
 
-void RenderQueue::RemoveRender(std::shared_ptr<Object> obj)
+void RenderQueue::RemoveRender(std::shared_ptr<GeoObject> obj)
 {
-    for(std::vector<std::weak_ptr<Object>>::iterator it = objects.begin(); it != objects.end();)
+    for(std::vector<std::weak_ptr<GeoObject>>::iterator it = objects.begin(); it != objects.end();)
     {
 	    if(it->lock() == obj)
 	    {

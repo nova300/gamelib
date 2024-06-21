@@ -51,18 +51,22 @@ static void UpdateCameraPlayerBoundsPush(Camera2D *camera, Object *player, int w
     Vector2 bboxWorldMax = GetScreenToWorld2D((Vector2){ (1 + bbox.x)*0.5f*width, (1 + bbox.y)*0.5f*height }, *camera);
     camera->offset = (Vector2){ (1 - bbox.x)*0.5f * width, (1 - bbox.y)*0.5f*height };
 
-    if (player->position.x < bboxWorldMin.x) camera->target.x = player->position.x;
-    if (player->position.y < bboxWorldMin.y) camera->target.y = player->position.y;
-    if (player->position.x > bboxWorldMax.x) camera->target.x = bboxWorldMin.x + (player->position.x - bboxWorldMax.x);
-    if (player->position.y > bboxWorldMax.y) camera->target.y = bboxWorldMin.y + (player->position.y - bboxWorldMax.y);
+    if (player->position.local.position.x < bboxWorldMin.x) camera->target.x = player->position.local.position.x;
+    if (player->position.local.position.y < bboxWorldMin.y) camera->target.y = player->position.local.position.y;
+    if (player->position.local.position.x > bboxWorldMax.x) camera->target.x = bboxWorldMin.x + (player->position.local.position.x - bboxWorldMax.x);
+    if (player->position.local.position.y > bboxWorldMax.y) camera->target.y = bboxWorldMin.y + (player->position.local.position.y - bboxWorldMax.y);
 }
 
 void TestProgram::Init()
 {
     canvas = LoadRenderTexture(canvaswidth, canvasheight);
+    SetTextureFilter(canvas.texture, TEXTURE_FILTER_BILINEAR);
     TextureAtlas atlas = TextureAtlas(std::string("player.png"), 32, 32);
 
-    auto sprite = player.AddBehaviour<AnimatedSprite>().lock();
+    player = root.AddChild().lock();
+    map = root.AddChild().lock();
+
+    auto sprite = player->AddBehaviour<AnimatedSprite>().lock();
     
     sprite->PushFrame(PlayerAnimations::DOWN, atlas.GetSpriteFrame(1));
 
@@ -85,22 +89,17 @@ void TestProgram::Init()
     sprite->PushFrame(PlayerAnimations::RUN_UP, atlas.GetSpriteFrame(9));
 
 
-    player.AddBehaviour<PlayerMovement>();
+    player->AddBehaviour<PlayerMovement>();
 
     camera = {0};
 
     camera.zoom = 1;
 
-    player.position.z = 1.0f;
-
-    
-
-    os.AddObject(&player);
-    rq.AddRender(&player);
+    player->position.local.position.z = 1.0f;
 
 
 
-    auto mapsprite = map.AddBehaviour<Sprite>().lock();
+    auto mapsprite = map->AddBehaviour<Sprite>().lock();
 
     auto mapimg = GenImageChecked(2000, 2000, 16, 16, GREEN, DARKGREEN);
 
@@ -109,11 +108,6 @@ void TestProgram::Init()
     mapsprite->Load(maptex);
 
     UnloadImage(mapimg);
-
-    os.AddObject(&map);
-    rq.AddRender(&map);
-
-    os.ProcessNewObjects();
 }
 
 bool TestProgram::FadeIn()
@@ -128,9 +122,7 @@ bool TestProgram::FadeOut()
 
 void TestProgram::Update(float deltaTime)
 {
-    UpdateCameraPlayerBoundsPush(&camera, &player, canvaswidth, canvasheight);
-    os.UpdateObjects(deltaTime);
-    
+    UpdateCameraPlayerBoundsPush(&camera, player.get(), canvaswidth, canvasheight);
 
     if(IsKeyPressed(KEY_F1))
     {
@@ -154,7 +146,7 @@ void TestProgram::Update(float deltaTime)
 
 void TestProgram::SoftRender()
 {
-    auto vec1 = GetWorldToScreen2D(Vector2{player.position.x + 16, player.position.y + 16}, camera);
+    auto vec1 = GetWorldToScreen2D(Vector2{player->position.world.position.x + 16, player->position.local.position.y + 16}, camera);
     vec1.x /= 2;
     vec1.y /= 2;
     trans.Update(vec1.x, vec1.y);
@@ -192,20 +184,19 @@ void TestProgram::SoftRender()
 
 void TestProgram::PostUpdate(float deltaTime)
 {
-    os.PostUpdateObjects(deltaTime);
+
 }
 
 void TestProgram::Destroy()
 {
-    os.RemoveObject(&player);
-    rq.RemoveRender(&player);
-
-    os.RemoveObject(&map);
-    rq.RemoveRender(&map);
 
     UnloadRenderTexture(canvas);
 }
 
+RenderQueue* TestProgram::GetRenderQueue(int index)
+{
+    return &rq;
+}
 
 void TestProgram::Render()
 {

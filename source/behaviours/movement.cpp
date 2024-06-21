@@ -43,5 +43,5 @@ void Movement::Update(float deltaTime)
         Vector3Scale(moveStep, col->CheckStep(moveStep));
     }
 
-    object->position.Translate(moveStep);
+    object->position.local.Translate(moveStep);
 }

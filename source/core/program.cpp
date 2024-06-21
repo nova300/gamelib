@@ -5,4 +5,3 @@ ProgramStack* Program::GetStack()
 {
     return this->stack;
 }
-

@@ -3,12 +3,13 @@
 
 #include <algorithm>
 
-static bool compareByZ(const std::weak_ptr<Object> a, const std::weak_ptr<Object> b)
+static bool compareByZ(const std::weak_ptr<GeoObject> a, const std::weak_ptr<GeoObject> b)
 {
     auto c = a.lock();
     auto d = b.lock();
     if(c == nullptr || d == nullptr) return false;
-    return c->position.z < d->position.z;
+    if(c->GetPos() == nullptr || d->GetPos() == nullptr) return false;
+    return c->GetPos()->world.position.z < d->GetPos()->world.position.z;
 }
 
 void RenderQueueSortedZ::PreRender()

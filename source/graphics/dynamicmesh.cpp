@@ -1,7 +1,10 @@
+#include "graphics/dynamicmesh.h"
+
+#include <raylib.h>
 #include <rlgl.h>
 #include <config.h>
 
-GeoObject::~GeoObject()
+DynamicMesh::~DynamicMesh()
 {
 	if(loaded)
 	{
@@ -9,7 +12,7 @@ GeoObject::~GeoObject()
 	}
 }
 
-void GeoObject::Clear()
+void DynamicMesh::Clear()
 {
 	vertQueue.clear();
 	verts.clear();
@@ -22,7 +25,7 @@ void GeoObject::Clear()
 	dirty = true;
 }
 
-void GeoObject::UnloadFromGPU()
+void DynamicMesh::UnloadFromGPU()
 {
 	rlUnloadVertexArray(mesh.vaoId);
 
@@ -30,7 +33,7 @@ void GeoObject::UnloadFromGPU()
     RL_FREE(mesh.vboId);
 }
 
-void GeoObject::Flush()
+void DynamicMesh::Flush()
 {
 	if(!dirty) return; //dirty flag is not set, gpu and cpu data should be identical and we dont need to do anything
 	if(loaded)
@@ -54,7 +57,7 @@ void GeoObject::Flush()
 
 }
 
-void GeoObject::Push(Vertex vert)
+void DynamicMesh::Push(Vertex vert)
 {
 
 	vertQueue.push_back(vert);
@@ -72,12 +75,12 @@ void GeoObject::Push(Vertex vert)
 	}
 }
 
-void GeoObject::Push(Vector3 POS, Vector2 UV, Vector3 NORMAL, Color COLOR)
+void DynamicMesh::Push(Vector3 POS, Vector2 UV, Vector3 NORMAL, Color COLOR)
 {
 	Push(Vertex{POS, UV, NORMAL, COLOR});
 }
 
-void GeoObject::Push(Triangle tri)
+void DynamicMesh::Push(Triangle tri)
 {
 	//triangles.push_back(tri);
 

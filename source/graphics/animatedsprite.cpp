@@ -1,5 +1,13 @@
 #include "graphics/animatedsprite.h"
 #include "core/object.h"
+#include "graphics/renderqueue.h"
+#include "core/program.h"
+
+void AnimatedSprite::Init()
+{
+    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(RQ_SPRITES);
+    rq->AddRender(GetObject()->GetBehaviour<AnimatedSprite>().lock());
+}
 
 void AnimatedSprite::Update(float deltaTime)
 {
@@ -35,6 +43,13 @@ void AnimatedSprite::Update(float deltaTime)
                 }
             }
         }
+        auto& newVec = animations.at(currentAnimation);
+        if(!newVec.empty())
+        {
+            auto& newFrame = newVec[currentFrame];
+            GetObject()->position.local.size.x = newFrame.width;
+            GetObject()->position.local.size.y = newFrame.height;
+        }
     }
 }
 
@@ -56,10 +71,10 @@ void AnimatedSprite::Render()
     {
         auto& frame = currentVec[currentFrame];
 
-        auto pos = GetObject()->position;
+        auto pos = GetObject()->position.world;
 
         Rectangle src = frame.src;
-        Rectangle dst = Rectangle{pos.x, pos.y, (float)frame.height * pos.scale.x, (float)frame.width * pos.scale.y};
+        Rectangle dst = Rectangle{pos.position.x, pos.position.y, (float)pos.size.x * pos.scale.x, (float)pos.size.y * pos.scale.y};
         if(flip) src = Rectangle{src.x, src.y, -src.width, src.height};
         DrawTexturePro(frame.tex->Texture(), src, dst, Vector2{0.0f, 0.0f}, pos.rotation.z, frame.color);
     }

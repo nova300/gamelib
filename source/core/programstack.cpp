@@ -102,9 +102,9 @@ void ProgramStack::Update(float deltaTime)
     if (state != FADEOUT || state != STOP) // dont update if fading out
     {
         GetTop()->Update(deltaTime);
-        GetTop()->root.Update(deltaTime);
+        GetTop()->root.UpdateInternal(deltaTime);
         GetTop()->PostUpdate(deltaTime);
-        GetTop()->root.PostUpdate(deltaTime);
+        GetTop()->root.PostUpdateInternal(deltaTime);
         
     } 
 

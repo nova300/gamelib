@@ -4,16 +4,24 @@
 #include <raylib.h>
 #include <string>
 #include "graphics/texturecache.h"
+#include "core/object.h"
+#include "graphics/geoobject.h"
 
-class Sprite : public Behaviour
+class Sprite : public Behaviour, public GeoObject
 {
 public:
-    ~Sprite() {};
+    virtual ~Sprite() {};
     void Load(std::shared_ptr<CTexture> tex);
     void Load(std::string path);
     void Load(Texture2D texture);
 
-    void Render() override;
+    virtual void Render();
+    virtual Position* GetPos()
+    {
+        return &GetObject()->position;
+    }
+
+    void Init() override;
 
     Color color = WHITE;
 private:
@@ -21,6 +29,4 @@ private:
     Texture2D unmanagedTexture;
     bool managed = true;
     Rectangle src;
-    float width = 32.0f;
-    float height = 32.0f;
 };

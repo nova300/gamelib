@@ -84,7 +84,7 @@ void PlayerMovement::Update(float deltaTime)
     turn *= moveSpeed * deltaTime;
     pitch *= moveSpeed * deltaTime;
 
-    GetObject()->position.Translate(turn, pitch);
+    GetObject()->position.local.Translate(turn, pitch);
 
 
     
