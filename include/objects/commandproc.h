@@ -33,8 +33,8 @@ private:
     std::string text;
 public:
     CmdMessage(std::string msg) { text = msg; };
-    std::string CmdName() { return text; };
-    std::string CmdPrompt() { return std::string("\n ** Press ENTER to continue ** "); };
+    std::string CmdName() override { return text; };
+    std::string CmdPrompt() override { return std::string("\n ** Press ENTER to continue ** "); };
     std::string RunCommand(std::string command, Program *prg) override;
 };
 

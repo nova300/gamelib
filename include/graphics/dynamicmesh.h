@@ -26,7 +26,7 @@ public:
     virtual ~DynamicMesh();
 
     virtual void Render() override;
-    virtual Position* GetPos()
+    virtual Position* GetPos() override
     {
         return &GetObject()->position;
     }

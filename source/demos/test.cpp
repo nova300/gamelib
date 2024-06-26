@@ -47,9 +47,9 @@ static void UpdateCameraPlayerBoundsPush(Camera2D *camera, Object *player, int w
 {
     static Vector2 bbox = { 0.2f, 0.2f };
 
-    Vector2 bboxWorldMin = GetScreenToWorld2D((Vector2){ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height }, *camera);
-    Vector2 bboxWorldMax = GetScreenToWorld2D((Vector2){ (1 + bbox.x)*0.5f*width, (1 + bbox.y)*0.5f*height }, *camera);
-    camera->offset = (Vector2){ (1 - bbox.x)*0.5f * width, (1 - bbox.y)*0.5f*height };
+    Vector2 bboxWorldMin = GetScreenToWorld2D(Vector2{ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height }, *camera);
+    Vector2 bboxWorldMax = GetScreenToWorld2D(Vector2{ (1 + bbox.x)*0.5f*width, (1 + bbox.y)*0.5f*height }, *camera);
+    camera->offset = Vector2{ (1 - bbox.x)*0.5f * width, (1 - bbox.y)*0.5f*height };
 
     if (player->position.local.position.x < bboxWorldMin.x) camera->target.x = player->position.local.position.x;
     if (player->position.local.position.y < bboxWorldMin.y) camera->target.y = player->position.local.position.y;
@@ -60,7 +60,6 @@ static void UpdateCameraPlayerBoundsPush(Camera2D *camera, Object *player, int w
 void TestProgram::Init()
 {
     canvas = LoadRenderTexture(canvaswidth, canvasheight);
-    SetTextureFilter(canvas.texture, TEXTURE_FILTER_BILINEAR);
     TextureAtlas atlas = TextureAtlas(std::string("player.png"), 32, 32);
 
     player = root.AddChild().lock();
@@ -131,11 +130,11 @@ void TestProgram::Update(float deltaTime)
     if(IsKeyPressed(KEY_F2))
     {
         std::string alpha;
-        for(unsigned char c; c < 255; c++)
+        for(unsigned char c = 0; c < 255; c++)
         {
             alpha.push_back(c);
         }
-        alpha.push_back(255);
+        alpha.push_back((char)255);
         GetStack()->Push(new Terminal(new CmdMessage(alpha)));
     }
     if(IsKeyPressed(KEY_F3))
@@ -149,7 +148,7 @@ void TestProgram::SoftRender()
     auto vec1 = GetWorldToScreen2D(Vector2{player->position.world.position.x + 16, player->position.local.position.y + 16}, camera);
     vec1.x /= 2;
     vec1.y /= 2;
-    trans.Update(vec1.x, vec1.y);
+    trans.Update((int)vec1.x, (int)vec1.y);
 
     auto c = ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)canvasheight}, 50, 50);
 

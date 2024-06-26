@@ -6,7 +6,7 @@
 ConsoleScreen bg;
 
 ConsoleBuffer buffer;
-std::ostream stream = std::ostream(&buffer);
+std::ostream stream(&buffer);
 
 void Console::Render(Color fontColor, Color fontPaperColor, Color bgColor)
 {
@@ -43,7 +43,7 @@ void Console::Draw(Rectangle dst)
 
 void Console::Draw(float marginX, float marginY)
 {
-    DrawTexturePro(renderTexture.texture, Rectangle{0.0, 0.0, PIXEL_WIDTH, -PIXEL_HEIGHT}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)PIXEL_WIDTH, (float)PIXEL_HEIGHT}, marginX, marginY), Vector2{0,0}, 0.0, WHITE);
+    DrawTexturePro(renderTexture.texture, Rectangle{0.0, 0.0, PIXEL_WIDTH, -PIXEL_HEIGHT}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)PIXEL_WIDTH, (float)PIXEL_HEIGHT}, (int)marginX, (int)marginY), Vector2{0,0}, 0.0, WHITE);
 }
 
 Rectangle Console::get_glyph(unsigned char code)
@@ -56,29 +56,44 @@ ConsoleScreen ConsoleBuffer::GetScreen()
     ConsoleScreen screenBuffer = {0};
     if(!init)
     {
+        #ifdef _MSC_VER
+        int rand = 0;
+        for(int h = 0; h < HEIGHT; h++)
+        {
+            for(int w = 0; w < WIDTH; w++)
+            {
+                rand++;
+                screenBuffer.data[h][w] = (w % 3) + h;
+            }
+        }
+        #else
         ConsoleScreen snow;
         screenBuffer = snow;
+        #endif   
     }
 
     int h = 0;
     int w = 0;
     for (auto s : lineBuffer)
     {
-        if (h > HEIGHT) continue;
+        if (h >= HEIGHT) continue;
         w = 0;
         for (auto c : s)
         {
-            if (w > WIDTH) continue;
+            if (w >= WIDTH) continue;
             screenBuffer.data[h][w] = c;
             w++;
         }
         h++;
     }
 
+    if(h >= HEIGHT) h = HEIGHT - 1;
+    if(w >= WIDTH) w = WIDTH - 1;
+
     if (((int)GetTime()) % 2 == 0)
     {
         if (h - 1 > 0) h--;
-        screenBuffer.data[h][w] = 219;
+        screenBuffer.data[h][w] = (char)219;
     }
 
     return screenBuffer;
@@ -188,7 +203,7 @@ int ConsoleBuffer::sync()
 void ConsoleBuffer::NewLine()
 {
     lineBuffer.push_back(std::string(""));
-    if (lineBuffer.size() > HEIGHT) lineBuffer.pop_front();
+    if (lineBuffer.size() >= HEIGHT) lineBuffer.pop_front();
 }
 
 void ConsoleBuffer::NewLineClear()
@@ -199,7 +214,7 @@ void ConsoleBuffer::NewLineClear()
         blank.push_back(0);
     }
     lineBuffer.push_back(blank);
-    if (lineBuffer.size() > HEIGHT) lineBuffer.pop_front();
+    if (lineBuffer.size() >= HEIGHT) lineBuffer.pop_front();
 }
 
 // 8x16 font, png format
@@ -510,7 +525,6 @@ static const unsigned int font_len = 3589;
 void Console::Init()
 {
     renderTexture = LoadRenderTexture(PIXEL_WIDTH, PIXEL_HEIGHT);
-    SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
     auto img = LoadImageFromMemory(".png", (const unsigned char*)&font_data, font_len);
     font = LoadTextureFromImage(img);
     UnloadImage(img);

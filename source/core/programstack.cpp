@@ -129,6 +129,8 @@ void ProgramStack::Render()
 
     switch (state)
     {
+    case NORMAL:
+        break;;
     case FADEIN:
         if(GetTop()->FadeIn())
         {
@@ -197,19 +199,4 @@ void ProgramStack::Reload()
     popnext = true;
     nextProgram = NULL;
     state = FADEOUT;
-}
-
-void ProgramStack::Clean()
-{
-    switch (clear)
-    {
-    case true:
-        clear = false;
-        Clear();
-        Push(nextProgram);
-        break;
-    
-    default:
-        break;
-    }
 }

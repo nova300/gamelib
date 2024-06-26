@@ -15,8 +15,8 @@ public:
     void Load(std::string path);
     void Load(Texture2D texture);
 
-    virtual void Render();
-    virtual Position* GetPos()
+    virtual void Render() override;
+    virtual Position* GetPos() override
     {
         return &GetObject()->position;
     }

@@ -25,7 +25,6 @@ public:
     Program *GetTop(void);
     void Reload();
     void Clear(void);
-    void Clean(void);
     int ProgramsRunning();
     int ProgramsCapacity();
     bool Stop();

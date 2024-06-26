@@ -51,8 +51,8 @@ public:
         }
     }
 
-    virtual int sync();
-
+    virtual int sync() override;
+    
     ConsoleScreen GetScreen();
 };
 
@@ -66,11 +66,11 @@ public:
     void Draw(float marginX, float marginY);
     std::ostream& GetStream();
 
-private:
+public:
     
     Rectangle get_glyph(unsigned char code);
     Texture2D font;
-    //ConsoleBuffer buffer;
+    //static ConsoleBuffer buffer;
     //std::ostream stream = std::ostream(&buffer);
     std::deque<std::string> screenBuffer;
     RenderTexture2D renderTexture;
@@ -95,8 +95,8 @@ public:
 
     FadeTransition trans = FadeTransition(0.5f, DARKBLUE);
 
-    bool FadeIn() { return trans.FadeIn(); };
-    bool FadeOut() { return trans.FadeOut(); };
+    bool FadeIn() override { return trans.FadeIn(); };
+    bool FadeOut() override { return trans.FadeOut(); };
 
 
     Console console;

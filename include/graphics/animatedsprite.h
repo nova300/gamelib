@@ -26,7 +26,7 @@ public:
     
     void Render() override;
     void Init() override;
-    virtual Position* GetPos()
+    virtual Position* GetPos() override
     {
         return &GetObject()->position;
     }
