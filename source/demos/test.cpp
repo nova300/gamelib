@@ -12,6 +12,7 @@
 
 #include <raylib.h>
 #include <raymath.h>
+#include <raygui.h>
 
 #include "player.png.inc.c"
 
@@ -26,6 +27,9 @@ int main(void)
 
     ProgramStack ps1;
     ps1.Switch(new TestProgram);
+
+    GuiLoadStyleDefault();
+    GuiLoadStyle("candy_ts.rgs");
 
 
     while(!WindowShouldClose() && !ps1.Stop())
@@ -107,6 +111,16 @@ void TestProgram::Init()
     mapsprite->Load(maptex);
 
     UnloadImage(mapimg);
+
+
+    window1 = root.AddChild().lock();
+
+    window1->position.local.size = Vector3{100, 200, 0};
+    window1->position.local.position = Vector3{50, 50, 0};
+
+    auto win = window1->AddBehaviour<Window>().lock();
+
+
 }
 
 bool TestProgram::FadeIn()
@@ -121,6 +135,7 @@ bool TestProgram::FadeOut()
 
 void TestProgram::Update(float deltaTime)
 {
+    wm.MouseInput(GetMousePosition());
     UpdateCameraPlayerBoundsPush(&camera, player.get(), canvaswidth, canvasheight);
 
     if(IsKeyPressed(KEY_F1))
@@ -194,7 +209,15 @@ void TestProgram::Destroy()
 
 RenderQueue* TestProgram::GetRenderQueue(int index)
 {
-    return &rq;
+    switch (index)
+    {
+    case RQ_WINDOWS:
+        return &wm;
+    
+    default:
+        return &rq;
+    }
+    
 }
 
 void TestProgram::Render()
@@ -203,5 +226,5 @@ void TestProgram::Render()
 
     //rq.DrawRender();
     DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)-canvasheight}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)canvasheight}, 50, 50) , Vector2Zero(), 0.0f, WHITE);
-
+    wm.DrawRender();
 }

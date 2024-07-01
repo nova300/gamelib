@@ -1,0 +1,13 @@
+#include "animatedsprite.cpp"
+#include "drawing.cpp"
+#include "dynamicmesh.cpp"
+#include "renderqueue.cpp"
+#include "renderqueuesorted2d.cpp"
+#include "renderqueuesortedz.cpp"
+#include "sprite.cpp"
+#include "textureatlas.cpp"
+#include "texturecache.cpp"
+
+#include "transitions/fadetransition.cpp"
+#include "transitions/iristransition.cpp"
+#include "transitions/squaretransition.cpp"

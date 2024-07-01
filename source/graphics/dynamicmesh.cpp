@@ -4,6 +4,11 @@
 #include <rlgl.h>
 #include <config.h>
 
+void DynamicMesh::Render()
+{
+	
+}
+
 DynamicMesh::~DynamicMesh()
 {
 	if(loaded)

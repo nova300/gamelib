@@ -1,0 +1,7 @@
+#include "behaviour.cpp"
+#include "input.cpp"
+#include "object.cpp"
+#include "position.cpp"
+#include "program.cpp"
+#include "programstack.cpp"
+#include "tilemap.cpp"

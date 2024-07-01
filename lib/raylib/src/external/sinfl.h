@@ -231,13 +231,13 @@ sinfl_refill(struct sinfl *s) {
 }
 static int
 sinfl_peek(struct sinfl *s, int cnt) {
-  assert(cnt >= 0 && cnt <= 56);
-  assert(cnt <= s->bitcnt);
+  //assert(cnt >= 0 && cnt <= 56); https://github.com/raysan5/raygui/issues/364
+  //assert(cnt <= s->bitcnt);
   return s->bitbuf & ((1ull << cnt) - 1);
 }
 static void
 sinfl_eat(struct sinfl *s, int cnt) {
-  assert(cnt <= s->bitcnt);
+  //assert(cnt <= s->bitcnt); https://github.com/raysan5/raygui/issues/364
   s->bitbuf >>= cnt;
   s->bitcnt -= cnt;
 }

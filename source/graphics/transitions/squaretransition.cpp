@@ -1,5 +1,6 @@
 #include "graphics/transition.h"
 #include <raymath.h>
+#include "utils.h"
 
 
 SquareTransition::SquareTransition(float TIME, Color COLOR, int WIDTH, int HEIGHT)
@@ -15,41 +16,6 @@ SquareTransition::~SquareTransition()
 {
     UnloadRenderTexture(canvas);
 }
-
-static Rectangle ScaleCanvasKeepAspect(Rectangle canvas, int marginX, int marginY)
-{
-    const float virtualRatio =  (float)canvas.width / (float)canvas.height;
-    float screenHeight = GetScreenHeight();
-    if(screenHeight < 1.0f) screenHeight = 1.0f;
-    const float screenRatio = (float)GetScreenWidth() / screenHeight;
-
-    const float desiredWidth = (float)(GetScreenWidth() -  2 * marginX);
-    const float desiredHeight = (float)(GetScreenHeight() - 2 * marginY);
-
-    float adjustedX = marginX;
-    float adjustedY = marginY;
-    float adjustedWidth = desiredWidth;
-    float adjustedHeight = desiredHeight;
-
-    if(virtualRatio > screenRatio)
-    {
-        adjustedHeight = desiredWidth / virtualRatio;
-        float centering = (GetScreenHeight() - adjustedHeight) / 2;
-        adjustedY = centering;
-        //printf("adjusting height\n");
-    }
-    else if(virtualRatio < screenRatio)
-    {
-        adjustedWidth = desiredHeight * virtualRatio;
-        float centering = (GetScreenWidth() - adjustedWidth) / 2;
-        adjustedX = centering;
-        //printf("adjusting width\n");
-    }
-
-    return Rectangle{adjustedX, adjustedY, adjustedWidth, adjustedHeight};
-}
-
-
 
 void SquareTransition::Update(int x, int y)
 {

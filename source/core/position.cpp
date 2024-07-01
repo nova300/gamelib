@@ -6,6 +6,11 @@ Vector2 Engine::Transform::Vec2()
     return Vector2{position.x, position.y};
 }
 
+Rectangle Engine::Transform::Rect()
+{
+    return Rectangle{position.x, position.y, size.x, size.y};
+}
+
 
 void Engine::Transform::Translate(float X, float Y, float Z)
 {

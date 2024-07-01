@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <raylib.h>
 
-static bool compareByZ(const std::weak_ptr<GeoObject> a, const std::weak_ptr<GeoObject> b)
+bool RenderQueueSorted2D::compareByZ(const std::weak_ptr<GeoObject> a, const std::weak_ptr<GeoObject> b)
 {
     auto c = a.lock();
     auto d = b.lock();

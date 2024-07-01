@@ -16,7 +16,8 @@ enum RenderQueueTypes
     RQ_SPRITES,
     RQ_VIRTUAL,
     RQ_3D,
-    RQ_MENU,
+    RQ_UI,
+    RQ_WINDOWS,
     RQ_CUSTOM
 };
 
