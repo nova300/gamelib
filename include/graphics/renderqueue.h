@@ -22,6 +22,4 @@ public:
 protected:
     //int pass = 0;
     std::vector<std::weak_ptr<GeoObject>> objects;
-
 };
-

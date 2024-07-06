@@ -13,7 +13,7 @@ void RenderQueue::DrawRender()
 	    else
 	    {
 	    	auto obj = it->lock();
-            obj->Render();
+			if(obj->GetVisibility()) obj->Render();
 			it++;
 	    }
     }

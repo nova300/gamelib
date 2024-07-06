@@ -14,6 +14,7 @@ namespace Engine
 
         Vector2 Vec2();
         Rectangle Rect();
+        BoundingBox Bounds();
         void Translate(float x, float y, float z = 0);
         void Translate(Vector3 vec);
         void Translate(Transform *pos);

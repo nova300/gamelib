@@ -140,7 +140,7 @@ void TestProgram::Update(float deltaTime)
 
     if(IsKeyPressed(KEY_F1))
     {
-        GetStack()->Switch(new Terminal(new CmdMessage(std::string("ERROR: INFINITE LOOP\n"))));
+        GetStack()->Push(new Terminal(new DebugConsole()));
     }
     if(IsKeyPressed(KEY_F2))
     {
@@ -154,8 +154,16 @@ void TestProgram::Update(float deltaTime)
     }
     if(IsKeyPressed(KEY_F3))
     {
-        GetStack()->Push(new Terminal(new DebugConsole()));
+        
     }
+    auto objs = root.GetAllOfType<GeoObject>(true);
+        int i = 0;
+        for(auto o : objs)
+        {
+            auto world = o->GetPos()->world;
+            printf("OBJECT: %d, POS: %f, %f\n", i, world.position.x, world.position.y);
+            i++;
+        }
 }
 
 void TestProgram::SoftRender()

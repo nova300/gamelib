@@ -11,6 +11,11 @@ Rectangle Engine::Transform::Rect()
     return Rectangle{position.x, position.y, size.x, size.y};
 }
 
+BoundingBox Engine::Transform::Bounds()
+{
+    return BoundingBox{position, size};
+}
+
 
 void Engine::Transform::Translate(float X, float Y, float Z)
 {

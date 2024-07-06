@@ -45,6 +45,9 @@ public:
     template<class T>
     void RemoveBehaviour();
 
+    template<typename T> 
+    std::vector<T*> GetAllOfType(bool hierarchicalSearch = false, bool includePreInitObjects = false);
+    
 protected:
     virtual void UpdateInternal(float deltaTime);
     virtual void PostUpdateInternal(float deltaTime);
@@ -61,6 +64,7 @@ protected:
     Object* parent = nullptr;
     Program* program = nullptr;
     int level = 0;
+    bool sleep = false;
 
 public:
     Program* GetProgram()
@@ -124,6 +128,50 @@ std::weak_ptr<T> Object::GetBehaviour()
         }
     }
     return {}; //looks weird, returns empty weak_ptr
+}
+
+template <typename T>
+std::vector<T*> Object::GetAllOfType(bool hierarchicalSearch, bool includePreInitObjects)
+{
+    std::vector<T*> objs;
+
+    T* self = dynamic_cast<T*>(this);
+    if(self)
+    {
+        objs.push_back(self);
+    }
+
+    for(auto& b : behaviours)
+    {
+        auto ptr = std::dynamic_pointer_cast<T>(b);
+        if(ptr)
+        {
+            objs.push_back(ptr.get());
+        }
+    }
+    if(includePreInitObjects)
+    {
+        for (auto &b : newbehaviours)
+        {
+            auto ptr = std::dynamic_pointer_cast<T>(b);
+            if (ptr)
+            {
+                objs.push_back(ptr.get());
+            }
+        }
+    }
+
+    if(hierarchicalSearch)
+    {
+        for(auto &c : childObjects)
+        {
+            if(c->sleep = true) continue;
+            auto cobjs = c->GetAllOfType<T>(hierarchicalSearch, includePreInitObjects);
+            objs.insert(objs.end(), cobjs.begin(), cobjs.end());
+        }
+    }
+
+    return objs;
 }
 
 template <typename T>
