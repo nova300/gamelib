@@ -7,6 +7,7 @@
 #include "graphics/renderqueue.h"
 #include "core/object.h"
 #include "core/position.h"
+#include "utils.h"
 
 #include <memory>
 
@@ -19,6 +20,13 @@ enum RenderQueueTypes
     RQ_UI,
     RQ_WINDOWS,
     RQ_CUSTOM
+};
+
+template<typename T>
+class IHasMapFor
+{
+public:
+    Map3D<T> GetMap<T>()
 };
 
 class ProgramStack;
