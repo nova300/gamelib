@@ -1,91 +1,70 @@
-#include "physics/collider.h"
+#include "physics/collider2d.h"
 #include <stdio.h>
+#include "interfaces.h"
 #include "utils.h"
 
+inline bool Collider2D::IHasCollider::CheckColliderDirty(const Collider2D::Collider& other)
+{
+    if(other == GetCollider()) return false;
+    return true;
+}
 
-bool Collider::Overlap(Collider *other)
+void Collider2D::ColliderSet::Update()
+{
+    //query objects and update diffs
+    //run throu all in map, where there is > 1 colliders run checks, record collider pairs run so we dont do them again
+}
+
+bool Collider2D::Collider::CheckCollision(Collider* other, Collider2D::CollisionInfo* details)
 {
     switch (type)
     {
-    case COL_BOX:
+    case Collider2D::ColliderType::RECTANGLE:
         switch (other->type)
         {
-        case COL_BOX:
-            return CheckCollisionRecs(Box(), other->Box());
+        case Collider2D::ColliderType::RECTANGLE:
+            return CheckCollisionRecs(Rect(), other->Rect());
             break;
 
-        case COL_SPRITE:
-            return CheckCollisionRecs(Box(), other->Sprite());
+        case Collider2D::ColliderType::CIRCLE:
+            return CheckCollisionCircleRec(other->Point(), other->Radius(), Rect());
             break;
 
-        case COL_CIRCLE:
-            return CheckCollisionCircleRec(other->Point(), other->Radius(), Box());
-            break;
-
-        case COL_POINT:
-            return CheckCollisionPointRec(other->Point(), Box());
-            break;
-        }
-        break;
-
-    case COL_SPRITE:
-        switch (other->type)
-        {
-        case COL_BOX:
-            return CheckCollisionRecs(Sprite(), other->Box());
-            break;
-
-        case COL_SPRITE:
-            return CheckCollisionRecs(Sprite(), other->Sprite());
-            break;
-
-        case COL_CIRCLE:
-            return CheckCollisionCircleRec(other->Point(), other->Radius(), Sprite());
-            break;
-
-        case COL_POINT:
-            return CheckCollisionPointRec(other->Point(), Sprite());
+        case Collider2D::ColliderType::POINT:
+            return CheckCollisionPointRec(other->Point(), Rect());
             break;
         }
         break;
     
-    case COL_CIRCLE:
+    case Collider2D::ColliderType::CIRCLE:
         switch (other->type)
         {
-        case COL_BOX:
-            return CheckCollisionCircleRec(Point(), Radius(), other->Box());
+        case Collider2D::ColliderType::RECTANGLE:
+            return CheckCollisionCircleRec(Point(), Radius(), other->Rect());
             break;
 
-        case COL_SPRITE:
-            return CheckCollisionCircleRec(Point(), Radius(), other->Sprite());
-            break;
-
-        case COL_CIRCLE:
+        case Collider2D::ColliderType::CIRCLE:
             return CheckCollisionCircles(Point(), Radius(), other->Point(), other->Radius());
             break;
 
-        case COL_POINT:
+        case Collider2D::ColliderType::POINT:
             return CheckCollisionPointCircle(other->Point(), Point(), Radius());
             break;
         }
         break;
 
-    case COL_POINT:
+    case Collider2D::ColliderType::POINT:
         switch (other->type)
         {
-        case COL_BOX:
-            return CheckCollisionPointRec(Point(), other->Box());
+        case Collider2D::ColliderType::RECTANGLE:
+            return CheckCollisionPointRec(Point(), other->Rect());
             break;
 
-        case COL_SPRITE:
-            return CheckCollisionPointRec(Point(), other->Sprite());
-            break;
-
-        case COL_CIRCLE:
+        case Collider2D::ColliderType::CIRCLE:
             return CheckCollisionPointCircle(Point(), other->Point(), other->Radius());
             break;
 
-        case COL_POINT:
+        case Collider2D::ColliderType::POINT:
             return (bool)Vector2Equals(Point(), other->Point());
         }
         break;
@@ -96,13 +75,13 @@ bool Collider::Overlap(Collider *other)
 
 }
 
-static void GenInfoBoxBox(CollisionInfo &info, Rectangle near, Rectangle far)
+static void GenInfoRect(CollisionInfo &info, Rectangle near, Rectangle far)
 {
     float dx = far.x - near.x;
     float px = ((far.width / 2) + (near.width / 2)) - abs(dx);
     if(px <= 0)
     {
-        printf("PHYSICS: tried to get info for non intersecting boxbox: X AXIS ERROR\n");
+        printf("PHYSICS: tried to get info for non intersecting Rect: X AXIS ERROR\n");
         return;
     }
 
@@ -110,7 +89,7 @@ static void GenInfoBoxBox(CollisionInfo &info, Rectangle near, Rectangle far)
     float py = ((far.height / 2) + (near.height / 2)) - abs(dy);
     if(py <= 0)
     {
-        printf("PHYSICS: tried to get info for non intersecting boxbox: Y AXIS ERROR\n");
+        printf("PHYSICS: tried to get info for non intersecting Rect: Y AXIS ERROR\n");
         return;
     }
 
@@ -142,23 +121,23 @@ CollisionInfo Collider::Info(Collider *other)
     
     switch (type)
     {
-    case COL_BOX:
+    case Collider2D::ColliderType::RECTANGLE:
         switch (other->type)
         {
-        case COL_BOX:
-            GenInfoBoxBox(info, Box(), other->Box());
+        case Collider2D::ColliderType::RECTANGLE:
+            GenInfoRect(info, Rect(), other->Rect());
             break;
 
         case COL_SPRITE:
-            GenInfoBoxBox(info, Box(), other->Sprite());
+            GenInfoRect(info, Rect(), other->Sprite());
             break;
 
-        case COL_CIRCLE:
-            //return CheckCollisionCircleRec(other->Point(), other->Radius(), Box());
+        case Collider2D::ColliderType::CIRCLE:
+            //return CheckCollisionCircleRec(other->Point(), other->Radius(), Rect());
             break;
 
-        case COL_POINT:
-            //return CheckCollisionPointRec(other->Point(), Box());
+        case Collider2D::ColliderType::POINT:
+            //return CheckCollisionPointRec(other->Point(), Rect());
             break;
         }
         break;
@@ -166,61 +145,61 @@ CollisionInfo Collider::Info(Collider *other)
     case COL_SPRITE:
         switch (other->type)
         {
-        case COL_BOX:
-            //return CheckCollisionRecs(Sprite(), other->Box());
+        case Collider2D::ColliderType::RECTANGLE:
+            //return CheckCollisionRecs(Sprite(), other->Rect());
             break;
 
         case COL_SPRITE:
             //return CheckCollisionRecs(Sprite(), other->Sprite());
             break;
 
-        case COL_CIRCLE:
+        case Collider2D::ColliderType::CIRCLE:
             //return CheckCollisionCircleRec(other->Point(), other->Radius(), Sprite());
             break;
 
-        case COL_POINT:
+        case Collider2D::ColliderType::POINT:
             //return CheckCollisionPointRec(other->Point(), Sprite());
             break;
         }
         break;
     
-    case COL_CIRCLE:
+    case Collider2D::ColliderType::CIRCLE:
         switch (other->type)
         {
-        case COL_BOX:
-            //return CheckCollisionCircleRec(Point(), Radius(), other->Box());
+        case Collider2D::ColliderType::RECTANGLE:
+            //return CheckCollisionCircleRec(Point(), Radius(), other->Rect());
             break;
 
         case COL_SPRITE:
             //return CheckCollisionCircleRec(Point(), Radius(), other->Sprite());
             break;
 
-        case COL_CIRCLE:
+        case Collider2D::ColliderType::CIRCLE:
             //return CheckCollisionCircles(Point(), Radius(), other->Point(), other->Radius());
             break;
 
-        case COL_POINT:
+        case Collider2D::ColliderType::POINT:
             //return CheckCollisionPointCircle(other->Point(), Point(), Radius());
             break;
         }
         break;
 
-    case COL_POINT:
+    case Collider2D::ColliderType::POINT:
         switch (other->type)
         {
-        case COL_BOX:
-            //return CheckCollisionPointRec(Point(), other->Box());
+        case Collider2D::ColliderType::RECTANGLE:
+            //return CheckCollisionPointRec(Point(), other->Rect());
             break;
 
         case COL_SPRITE:
             //return CheckCollisionPointRec(Point(), other->Sprite());
             break;
 
-        case COL_CIRCLE:
+        case Collider2D::ColliderType::CIRCLE:
             //return CheckCollisionPointCircle(Point(), other->Point(), other->Radius());
             break;
 
-        case COL_POINT:
+        case Collider2D::ColliderType::POINT:
             //return (bool)Vector2Equals(Point(), other->Point());
             break;
         }

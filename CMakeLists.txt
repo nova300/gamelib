@@ -12,7 +12,7 @@ add_library(gamelib
     source/objects/debugconsole.cpp 
     source/objects/console.cpp 
     source/objects/commandproc.cpp 
-    source/physics/collider.cpp 
+    source/physics/collider2d.cpp 
     source/behaviours/playermovement.cpp 
     source/behaviours/movement.cpp 
     source/utils.cpp

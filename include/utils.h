@@ -65,14 +65,14 @@ public:
         return &vector;
     }
 
-    T* Get(uint index)
+    T* Get(unsigned int index)
     {
         if(index >= vector.size()) return nullptr;
         if(!vector[index].inUse) return nullptr;
         return &vector[index].value;
     }
 
-    uint Add(T value)
+    unsigned int Add(T value)
     {
 
         if(std::is_base_of<IPoolLifetime, T>::value)
@@ -102,7 +102,7 @@ public:
 
     }
 
-    void Remove(uint index)
+    void Remove(unsigned int index)
     {
         if(index <= vector.size()) return;
         if(std::is_base_of<IPoolLifetime, T>::value)
@@ -128,13 +128,13 @@ public:
     
     using Position = std::pair<int, int>;
 private:
-    std::map<Position, std::set<uint>> map;
+    std::map<Position, std::set<unsigned int>> map;
     PoolVector<Data> storage;
 
-    std::vector<T*> Get(std::set<uint> idxes)
+    std::vector<T*> Get(std::set<unsigned int> idxes)
     {
         std::vector<T*> out;
-        for(uint idx : idxes)
+        for(unsigned int idx : idxes)
         {
             T* ptr = storage.Get(idx);
             if(ptr) out.push_back(ptr);
@@ -164,10 +164,10 @@ public:
         x = x / cellSize;
         y = y / cellSize;
         auto vec = std::pair<int, int>(x, y);
-        std::set<uint> idxes;
+        std::set<unsigned int> idxes;
         if (map.count(vec) > 0)
         {
-            for(uint idx : map[vec])
+            for(unsigned int idx : map[vec])
             {
                 idxes.insert(idx);
             }
@@ -181,7 +181,7 @@ public:
         Y = Y / cellSize;
         W = W / cellSize;
         H = H / cellSize;
-        std::set<uint> idxes;
+        std::set<unsigned int> idxes;
         for(int x = X; x < X + W; x++)
         {
             for(int y = Y; y < Y + H; y++)
@@ -189,7 +189,7 @@ public:
                 auto p = Position(x, y);
                 if (map.count(p) > 0)
                 {
-                    for (uint idx : map[p])
+                    for (unsigned int idx : map[p])
                     {
                         idxes.insert(idx);
                     };
@@ -199,9 +199,9 @@ public:
         return Get(idxes);
     }
 
-    std::vector<T*> Get(uint index)
+    std::vector<T*> Get(unsigned int index)
     {
-        std::set<uint> indicies;
+        std::set<unsigned int> indicies;
         Data *data = storage.Get(index);
         float X = data->x / cellSize;
         float Y = data->y / cellSize;
@@ -216,7 +216,7 @@ public:
                     auto p = Position(x, y);
                     if (map.count(p) > 0)
                     {
-                        for (uint idx : map[p])
+                        for (unsigned int idx : map[p])
                         {
                             indicies.insert(idx);
                         };
@@ -230,7 +230,7 @@ public:
 
     
 
-    void Set(uint index, T value)
+    void Set(unsigned int index, T value)
     {
         Data* ptr = storage.Get(index);
         if(ptr)
@@ -239,21 +239,27 @@ public:
         }
     }
 
-    void Update(int x, int y, int w, int h, uint index)
+    void Update(int x, int y, int w, int h, unsigned int index)
     {
         Data* dat = storage.Get(index);
         if(dat == nullptr) return;
+        bool different = false;
+        if(dat->x != x) different = true;
+        if(!different && dat->y != y) different = true;
+        if(!different && dat->w != w) different = true;
+        if(!different && dat->h != h) different = true;
+        if(!different) return;
         Erase(dat->x, dat->y, dat->w, dat->h, index);
         Fill(x, y, w, h, index);
     }
 
-    void Update(int x, int y, int w, int h, uint index, T value)
+    void Update(int x, int y, int w, int h, unsigned int index, T value)
     {
         Set(index, value);
         Update(x, y, w, h, index);
     }
 
-    uint Add(int x, int y, int w, int h, T value)
+    unsigned int Add(int x, int y, int w, int h, T value)
     {
         Data dat = 
         {
@@ -263,13 +269,13 @@ public:
             h,
             value
         };
-        uint index = storage.Add(value);
+        unsigned int index = storage.Add(value);
         Fill(x, y, w, h, index);
 
         return index;
     }
 
-    void Remove(uint index)
+    void Remove(unsigned int index)
     {
         Data *data = storage.Get(index);
         if(!data) return;
@@ -277,7 +283,7 @@ public:
         storage.Remove(data);
     }
 
-    void Fill(int X, int Y, int W, int H, uint index)
+    void Fill(int X, int Y, int W, int H, unsigned int index)
     {
         X = X / cellSize;
         Y = Y / cellSize;
@@ -296,7 +302,7 @@ public:
         }
     }
 
-    void Erase(int X, int Y, int W, int H, uint index)
+    void Erase(int X, int Y, int W, int H, unsigned int index)
     {
         X = X / cellSize;
         Y = Y / cellSize;
@@ -355,13 +361,13 @@ public:
     
     using Position = std::tuple<int, int, int>;
 private:
-    std::map<Position, std::set<uint>> map;
+    std::map<Position, std::set<unsigned int>> map;
     PoolVector<Data> storage;
 
-    std::vector<T*> Get(std::set<uint> idxes)
+    std::vector<T*> Get(std::set<unsigned int> idxes)
     {
         std::vector<T*> out;
-        for(uint idx : idxes)
+        for(unsigned int idx : idxes)
         {
             T* ptr = storage.Get(idx);
             if(ptr) out.push_back(ptr);
@@ -392,10 +398,10 @@ public:
 
     std::vector<T*> Get(Position vec)
     {
-        std::set<uint> idxes;
+        std::set<unsigned int> idxes;
         if (map.count(vec) > 0)
         {
-            for(uint idx : map[vec])
+            for(unsigned int idx : map[vec])
             {
                 idxes.insert(idx);
             }
@@ -405,7 +411,7 @@ public:
 
     std::vector<T*> Get(int X, int Y, int Z, int W, int H, int D)
     {
-        std::set<uint> idxes;
+        std::set<unsigned int> idxes;
         for(int x = X; x < X + W; x++)
         {
             for(int y = Y; y < Y + H; y++)
@@ -415,7 +421,7 @@ public:
                     auto p = Position(x, y, z);
                     if (map.count(p) > 0)
                     {
-                        for (uint idx : map[p])
+                        for (unsigned int idx : map[p])
                         {
                             idxes.insert(idx);
                         };
@@ -426,9 +432,9 @@ public:
         return Get(idxes);
     }
 
-    std::vector<T*> Get(uint index)
+    std::vector<T*> Get(unsigned int index)
     {
-        std::set<uint> indicies;
+        std::set<unsigned int> indicies;
         Data *data = storage.Get(index);
         if (data)
         {
@@ -441,7 +447,7 @@ public:
                         auto p = Position(x, y, z);
                         if (map.count(p) > 0)
                         {
-                            for (uint idx : map[p])
+                            for (unsigned int idx : map[p])
                             {
                                 indicies.insert(idx);
                             };
@@ -456,7 +462,7 @@ public:
 
     
 
-    void Set(uint index, T value)
+    void Set(unsigned int index, T value)
     {
         Data* ptr = storage.Get(index);
         if(ptr)
@@ -465,7 +471,7 @@ public:
         }
     }
 
-    void Update(int x, int y, int z, int w, int h, int d, uint index)
+    void Update(int x, int y, int z, int w, int h, int d, unsigned int index)
     {
         Data* dat = storage.Get(index);
         if(dat == nullptr) return;
@@ -473,13 +479,13 @@ public:
         Fill(x, y, z, w, h, d, index);
     }
 
-    void Update(int x, int y, int z, int w, int h, int d, uint index, T value)
+    void Update(int x, int y, int z, int w, int h, int d, unsigned int index, T value)
     {
         Set(index, value);
         Update(x, y, z, w, h, d, index);
     }
 
-    uint Add(int x, int y, int z, int w, int h, int d, T value)
+    unsigned int Add(int x, int y, int z, int w, int h, int d, T value)
     {
         Data dat = 
         {
@@ -491,13 +497,13 @@ public:
             d,
             value
         };
-        uint index = storage.Add(value);
+        unsigned int index = storage.Add(value);
         Fill(x, y, z, w, h, d, index);
 
         return index;
     }
 
-    void Remove(uint index)
+    void Remove(unsigned int index)
     {
         Data *data = storage.Get(index);
         if(!data) return;
@@ -505,7 +511,7 @@ public:
         storage.Remove(data);
     }
 
-    void Fill(int X, int Y, int Z, int W, int H, int D, uint index)
+    void Fill(int X, int Y, int Z, int W, int H, int D, unsigned int index)
     {
         for(int x = X; x < X + W; x++)
         {
@@ -523,7 +529,7 @@ public:
         }
     }
 
-    void Erase(int X, int Y, int Z, int W, int H, int D, uint index)
+    void Erase(int X, int Y, int Z, int W, int H, int D, unsigned int index)
     {
         for(int x = X; x < X + W; x++)
         {

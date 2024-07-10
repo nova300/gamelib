@@ -22,13 +22,6 @@ enum RenderQueueTypes
     RQ_CUSTOM
 };
 
-template<typename T>
-class IHasMapFor
-{
-public:
-    Map3D<T> GetMap<T>()
-};
-
 class ProgramStack;
 
 class Program

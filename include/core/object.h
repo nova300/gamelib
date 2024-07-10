@@ -2,7 +2,6 @@
 
 #include "core/behaviour.h"
 #include "core/position.h"
-#include "physics/types.h"
 
 class Program;
 
