@@ -57,3 +57,27 @@ void Sprite::Load(Texture2D tex)
     src = Rectangle{0.0f, 0.0f, (float)unmanagedTexture.width, (float)unmanagedTexture.height};
     managed = false;
 }
+
+void ColorRectangle::Init()
+{
+    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(RQ_SPRITES);
+    rq->AddRender(GetObject()->GetBehaviour<ColorRectangle>().lock());
+}
+
+void ColorRectangle::Render()
+{
+    auto pos = GetObject()->position.world;
+    DrawRectanglePro(pos.Rect(), Vector2Zero(), 0.0f, color);
+}
+
+void ColorCircle::Init()
+{
+    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(RQ_SPRITES);
+    rq->AddRender(GetObject()->GetBehaviour<ColorCircle>().lock());
+}
+
+void ColorCircle::Render()
+{
+    auto pos = GetObject()->position.world;
+    DrawCircleV(pos.Vec2(), pos.size.x, color);
+}

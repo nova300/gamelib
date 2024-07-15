@@ -30,3 +30,42 @@ private:
     bool managed = true;
     Rectangle src;
 };
+
+
+class ColorRectangle : public Behaviour, public GeoObject
+{
+public:
+    virtual ~ColorRectangle() {};
+    virtual void Render() override;
+    virtual Position* GetPos() override
+    {
+        return &GetObject()->position;
+    }
+
+    void Init() override;
+
+    Color color = WHITE;
+    void SetColor(Color COLOR)
+    {
+        color = COLOR;
+    }
+};
+
+class ColorCircle : public Behaviour, public GeoObject
+{
+public:
+    virtual ~ColorCircle() {};
+    virtual void Render() override;
+    virtual Position* GetPos() override
+    {
+        return &GetObject()->position;
+    }
+
+    void Init() override;
+
+    Color color = WHITE;
+    void SetColor(Color COLOR)
+    {
+        color = COLOR;
+    }
+};

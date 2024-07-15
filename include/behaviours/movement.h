@@ -17,8 +17,11 @@ public:
     void SetVelocity(Vector3 velocity);
     void SetVelocity(Vector2 velocity);
     
-    virtual Collider2D::Collider GetCollider() override;
+    virtual Collider2D::Collider GetCollider(Collider2D::ColliderSet* set = nullptr) override;
     virtual void OnCollision(const Collider2D::CollisionInfo& details) override;
+
+    Collider2D::Collider collider;
+    void SetCollider(Collider2D::Collider COLLIDER);
 
     void Update(float deltaTime) override;
     void Init() override;

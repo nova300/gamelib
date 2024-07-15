@@ -5,10 +5,11 @@
 #include "behaviours/playermovement.h"
 #include "graphics/animatedsprite.h"
 #include "graphics/textureatlas.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include "objects/commandproc.h"
 #include "objects/debugconsole.h"
 #include "graphics/texturecache.h"
+#include "utils/timekeep.h"
 
 #include <raylib.h>
 #include <raymath.h>
@@ -31,14 +32,21 @@ int main(void)
     GuiLoadStyleDefault();
     GuiLoadStyle("candy_ts.rgs");
 
+    auto timers = Timekeep::GetGlobalTimers();
+
 
     while(!WindowShouldClose() && !ps1.Stop())
     {
+        timers->updatetime = GetTime();
         ps1.Update(GetFrameTime());
+        timers->updatetime = GetTime() - timers->updatetime;
 
+        float renderTime = GetTime();
         BeginDrawing();
             ps1.Render();
         EndDrawing();
+        renderTime = GetTime() - renderTime;
+        timers->rendertime = renderTime;
     }
 
     ps1.Clear();
@@ -101,24 +109,30 @@ void TestProgram::Init()
     player->position.local.position.z = 1.0f;
 
 
-
-    auto mapsprite = map->AddBehaviour<Sprite>().lock();
-
-    auto mapimg = GenImageChecked(2000, 2000, 16, 16, GREEN, DARKGREEN);
-
-    auto maptex = CLoadTexture(mapimg);
-    
-    mapsprite->Load(maptex);
-
-    UnloadImage(mapimg);
-
-
     window1 = root.AddChild().lock();
 
     window1->position.local.size = Vector3{100, 200, 0};
     window1->position.local.position = Vector3{50, 50, 0};
 
     auto win = window1->AddBehaviour<Window>().lock();
+
+
+    auto tileRoot = root.AddChild().lock();
+
+    const int tileAmount = 500;
+    const int tileRadius = 1000;
+
+    for(int i = 0; i < tileAmount; i++)
+    {
+        auto tile = tileRoot->AddChild().lock();
+        tile->position.local.position.x = GetRandomValue(-tileRadius, tileRadius);
+        tile->position.local.position.y = GetRandomValue(-tileRadius, tileRadius);
+        tile->position.local.size.x = 16;
+        tile->position.local.size.y = 16;
+        auto sprite = tile->AddBehaviour<ColorRectangle>().lock();
+        sprite->SetColor(GetRandomColor());
+        tiles.push_back(tile);
+    }
 
 
 }
@@ -136,7 +150,10 @@ bool TestProgram::FadeOut()
 void TestProgram::Update(float deltaTime)
 {
     wm.MouseInput(GetMousePosition());
-    UpdateCameraPlayerBoundsPush(&camera, player.get(), canvaswidth, canvasheight);
+    //UpdateCameraPlayerBoundsPush(&camera, player.get(), GetScreenWidth(), GetScreenHeight());
+
+    camera.target = player.get()->position.world.Vec2();
+    camera.offset = Vector2{GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 
     if(IsKeyPressed(KEY_F1))
     {
@@ -197,11 +214,11 @@ void TestProgram::SoftRender()
 
     //printf("X: %f Y: %f\n", mouse.x, mouse.y);
 
-    BeginTextureMode(canvas);
-        ClearBackground(DARKGRAY);
-        rq.DrawRender();
+    //BeginTextureMode(canvas);
+        //ClearBackground(DARKGRAY);
+        //rq.DrawRender();
         //rawCircle(mouse.x, mouse.y, 32.0f, RED);
-    EndTextureMode();
+    //EndTextureMode();
 }   
 
 void TestProgram::PostUpdate(float deltaTime)
@@ -231,8 +248,19 @@ RenderQueue* TestProgram::GetRenderQueue(int index)
 void TestProgram::Render()
 {
     ClearBackground(DARKBLUE);
+    float rqtime = GetTime();
+    rq.DrawRender();
+    rqtime = GetTime() - rqtime;
+    Timekeep::GetGlobalTimers()->rq1time = rqtime;
+    
+    Timekeep::DrawTimers();
 
-    //rq.DrawRender();
-    DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)-canvasheight}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)canvasheight}, 50, 50) , Vector2Zero(), 0.0f, WHITE);
+    //DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)-canvasheight}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)canvasheight}, 50, 50) , Vector2Zero(), 0.0f, WHITE);
     wm.DrawRender();
+
+    BeginMode2D(camera);
+    DrawRectangleLines(rq.renderBounds.x, rq.renderBounds.y, rq.renderBounds.width, rq.renderBounds.height, RED);
+    //DrawRectangleLines(camBounds.x, camBounds.y, camBounds.width, camBounds.height, GREEN);
+    //DrawRectangleLinesEx(camBounds, 5.0f, BLUE);
+    EndMode2D();
 }

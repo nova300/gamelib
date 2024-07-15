@@ -2,7 +2,7 @@
 #include "objects/debugconsole.h"
 #include <raylib.h>
 #include <iostream>
-#include "utils.h"
+#include "utils/utils.h"
 #include <string>
 #include <sstream>
 #include "core/programstack.h"

@@ -1,9 +1,57 @@
-#include "utils.h"
+#include "utils/utils.h"
+#include "utils/math.h"
 #include <raylib.h>
 #include <cstring>
 #include <algorithm>
 #include <math.h>
 #include <string>
+#include <raymath.h>
+#include "utils/timekeep.h"
+
+Timekeep::Timers GLOBALTIMERS;
+Timekeep::Timers SMOOTHGLOBALTIMERS;
+
+Timekeep::Timers* Timekeep::GetGlobalTimers()
+{
+    return &GLOBALTIMERS;
+}
+
+void Timekeep::DrawTimers()
+{
+    const float step = 0.24f * GetFrameTime();
+    SMOOTHGLOBALTIMERS.rendertime = Lerp(SMOOTHGLOBALTIMERS.rendertime, GLOBALTIMERS.rendertime, step);
+    SMOOTHGLOBALTIMERS.rq1draw = Lerp(SMOOTHGLOBALTIMERS.rq1draw, GLOBALTIMERS.rq1draw, step);
+    SMOOTHGLOBALTIMERS.rq1pre = Lerp(SMOOTHGLOBALTIMERS.rq1pre, GLOBALTIMERS.rq1pre, step);
+    SMOOTHGLOBALTIMERS.rq1pre2 = Lerp(SMOOTHGLOBALTIMERS.rq1pre2, GLOBALTIMERS.rq1pre2, step);
+    SMOOTHGLOBALTIMERS.rq1post = Lerp(SMOOTHGLOBALTIMERS.rq1post, GLOBALTIMERS.rq1post, step);
+    SMOOTHGLOBALTIMERS.rq1time = Lerp(SMOOTHGLOBALTIMERS.rq1time, GLOBALTIMERS.rq1time, step);
+    SMOOTHGLOBALTIMERS.updatetime = Lerp(SMOOTHGLOBALTIMERS.updatetime, GLOBALTIMERS.updatetime, step);
+
+
+    DrawText(TextFormat("UPDATE:        %f", SMOOTHGLOBALTIMERS.updatetime), 20, 20, 16, GREEN);
+    DrawText(TextFormat("RENDER:        %f", SMOOTHGLOBALTIMERS.rendertime), 20, 40, 16, GREEN);
+    DrawText(TextFormat("RQ1 TOTAL:     %f", SMOOTHGLOBALTIMERS.rq1time), 20, 60, 16, GREEN);
+    DrawText(TextFormat("RQ1 LIST:      %f", SMOOTHGLOBALTIMERS.rq1pre), 20, 80, 16, GREEN);
+    DrawText(TextFormat("RQ1 PRE:       %f", SMOOTHGLOBALTIMERS.rq1pre2), 20, 100, 16, GREEN);
+    DrawText(TextFormat("RQ1 DRAW:      %f", SMOOTHGLOBALTIMERS.rq1draw), 20, 120, 16, GREEN);
+    DrawText(TextFormat("RQ1 POST:      %f", SMOOTHGLOBALTIMERS.rq1post), 20, 140, 16, GREEN);
+}
+
+
+Rectangle GetCameraBounds(const Camera2D camera, const float offset, const float width, const float height)
+{
+    Vector2 origin = Vector2AddValue(Vector2Subtract(camera.target, camera.offset), offset);
+    Vector2 extent = Vector2SubtractValue(Vector2{width / camera.zoom, height / camera.zoom}, offset * 2);
+
+    auto camBounds = Rectangle{
+        origin.x,
+        origin.y,
+        extent.x,
+        extent.y
+    };
+
+    return camBounds;
+}
 
 unsigned short crc(const char *data, int size)
 {

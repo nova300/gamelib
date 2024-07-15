@@ -2,7 +2,7 @@
 
 #include "graphics/renderqueue.h"
 
-class WindowManager : public RenderQueue
+class WindowManager : public RenderQueueVector
 {
     
 };

@@ -9,6 +9,7 @@
 
 #include "core/behaviour.h"
 #include "core/object.h"
+#include "utils/containers.h"
 
 
 namespace Collider2D
@@ -31,6 +32,12 @@ struct CollisionInfo
     Vector2 position = Vector2Zero();
     Vector2 pushout = Vector2Zero();
     Vector2 normal = Vector2Zero();
+
+    template<typename T>
+    T* GetOther()
+    {
+        return dynamic_cast<T>(other);
+    }
 };
 
 struct Collider
@@ -63,7 +70,7 @@ struct Collider
     }
 
     bool CheckCollision(Collider* other, CollisionInfo* details = nullptr);
-    bool CheckStep(Vector2 step);
+    
     bool operator==(const Collider& other) const
     { 
         if(this->type != other.type) return false;
@@ -72,6 +79,12 @@ struct Collider
         if(this->data.rect.width != other.data.rect.width) return false;
         if(this->data.rect.height != other.data.rect.height) return false;
         return true;
+    }
+
+    template<typename T>
+    T* GetOwner()
+    {
+        return dynamic_cast<T>(owner);
     }
 };
 
@@ -82,7 +95,7 @@ class ColliderSet
 {
 public:
     void Update();
-
+    float CheckStep(int index, Vector2 step);
 
 private:
     Map2D<Collider> collisionMap;

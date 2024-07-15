@@ -1,6 +1,6 @@
 #include "graphics/transition.h"
 #include <raymath.h>
-#include "utils.h"
+#include "utils/utils.h"
 
 
 IrisTransition::IrisTransition(float TIME, Color COLOR, int WIDTH, int HEIGHT, Vector2 target)

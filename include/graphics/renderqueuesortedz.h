@@ -2,7 +2,7 @@
 
 #include "graphics/renderqueue.h"
 
-class RenderQueueSortedZ : public RenderQueue
+class RenderQueueSortedZ : public RenderQueueVector
 {
 public:
     void PreRender() override;

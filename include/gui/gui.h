@@ -4,7 +4,7 @@
 #include "graphics/renderqueue.h"
 #include <memory>
 
-class WindowManager : public RenderQueue
+class WindowManager : public RenderQueueVector
 {
 public:
     WindowManager() {};

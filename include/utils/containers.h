@@ -6,46 +6,7 @@
 #include <string>
 #include <set>
 
-bool string_compare(const char* ctstr, const char* compstring);
-
-Rectangle ScaleCanvasKeepAspect(Rectangle canvas, int marginX, int marginY);
-
-unsigned short crc(const char *data, int size = 24);
-
-std::vector<std::string> splitstring(std::string s, std::string delimiter);
-
-Vector2 smooth_towards(float curr, float target, float duration, float curr_velocity);
-
-Color GetRandomColor();
-
-Color GetHueColor(float v);
-
-float sign(float val);
-
-std::string convertToLowercase(const std::string& str);
-
-template<typename T>
-std::pair<T, T> Shuffle(T t1, T t2)
-{
-    int r = GetRandomValue(0, 1);
-    switch (r)
-    {
-    case 1:
-        return std::make_pair(t2, t1);
-        break;
-    
-    default:
-        return std::make_pair(t1, t2);
-        break;
-    }
-}
-
-class IPoolLifetime
-{
-public:
-    virtual void PoolConstruct() = 0;
-    virtual void PoolDestruct() = 0; 
-};
+#include "utils/types.h"
 
 template<typename T>
 class PoolVector
@@ -53,38 +14,42 @@ class PoolVector
 private:
     struct Data
     {
-        bool inUse;
+        int index;
         T value;
     };
 
     std::vector<Data> vector;
 
 public:
-    std::vector<Data>* GetVector()
+    std::map<int, T*> GetAll()
     {
-        return &vector;
+        std::map<int, T*> out;
+
+        for(Data& d : vector)
+        {
+            if(d.index > -1)
+            {
+                out[d.index] = &d.value;
+            }
+        }
+
+        return out;
     }
 
     T* Get(unsigned int index)
     {
         if(index >= vector.size()) return nullptr;
-        if(!vector[index].inUse) return nullptr;
+        if(vector[index].index != index) return nullptr;
         return &vector[index].value;
     }
 
     unsigned int Add(T value)
     {
-
-        if(std::is_base_of<IPoolLifetime, T>::value)
-        {
-            value.PoolConstruct();
-        }
-
         for (int i = 0; i < vector.size() ; i++)
         {
-            if(!vector[i].inUse)
+            if(vector[i].index != i)
             {
-                vector[i].inUse = true;
+                vector[i].index = i;
                 vector[i].value = value;
                 return i;
             }
@@ -94,22 +59,19 @@ public:
 
         Data data = 
         {
-            true,
+            index,
             value
         };
 
         vector.push_back(data);
 
+        return index;
     }
 
     void Remove(unsigned int index)
     {
         if(index <= vector.size()) return;
-        if(std::is_base_of<IPoolLifetime, T>::value)
-        {
-            vector[index].value.PoolDestruct();
-        }
-        vector[index].inUse = false;  
+        vector[index].index = -1;  
     }
 
 };
@@ -136,8 +98,8 @@ private:
         std::vector<T*> out;
         for(unsigned int idx : idxes)
         {
-            T* ptr = storage.Get(idx);
-            if(ptr) out.push_back(ptr);
+            T* ptr = &storage.Get(idx)->value;
+            if(ptr != nullptr) out.push_back(ptr);
         }
         return out;
     }
@@ -157,6 +119,20 @@ public:
     Map2D(int CELLSIZE = 32)
     {
         cellSize = CELLSIZE;
+    }
+
+    std::map<int, T*> GetAllActive()
+    {
+        std::map<int, T*> out;
+        std::map<int, Data*> dat = storage.GetAll();
+
+        for(const auto& [index, value] : dat)
+        {
+            if(value == nullptr) continue;
+            out[index] = &value->value;
+        }
+
+        return out;
     }
 
     std::vector<T*> Get(int x, int y)
@@ -182,9 +158,9 @@ public:
         W = W / cellSize;
         H = H / cellSize;
         std::set<unsigned int> idxes;
-        for(int x = X; x < X + W; x++)
+        for(int x = X - 1; x <= X + W; x++)
         {
-            for(int y = Y; y < Y + H; y++)
+            for(int y = Y - 1; y <= Y + H; y++)
             {
                 auto p = Position(x, y);
                 if (map.count(p) > 0)
@@ -199,19 +175,26 @@ public:
         return Get(idxes);
     }
 
+    std::vector<T*> Get(IntRectangle bounds)
+    {
+        return Get(bounds.x, bounds.y, bounds.width, bounds.height);
+    }
+
     std::vector<T*> Get(unsigned int index)
     {
         std::set<unsigned int> indicies;
         Data *data = storage.Get(index);
-        float X = data->x / cellSize;
-        float Y = data->y / cellSize;
-        float W = data->w / cellSize;
-        float H = data->h / cellSize;
+        const int X = data->x / cellSize;
+        const int Y = data->y / cellSize;
+        const int W = data->w / cellSize;
+        const int H = data->h / cellSize;
+        if(W == 0) W = 1;
+        if(H == 0) H = 1;
         if (data)
         {
-            for (int x = X; x < X + W; x++)
+            for (int x = X - 1; x <= X + W; x++)
             {
-                for (int y = Y; y < Y + H; y++)
+                for (int y = Y - 1; y <= Y + H; y++)
                 {
                     auto p = Position(x, y);
                     if (map.count(p) > 0)
@@ -251,12 +234,26 @@ public:
         if(!different) return;
         Erase(dat->x, dat->y, dat->w, dat->h, index);
         Fill(x, y, w, h, index);
+        dat->x = x;
+        dat->y = y;
+        dat->w = w;
+        dat->h = h;
     }
 
     void Update(int x, int y, int w, int h, unsigned int index, T value)
     {
         Set(index, value);
         Update(x, y, w, h, index);
+    }
+
+    void Update(IntRectangle bounds, unsigned int index)
+    {
+        Update(bounds.x, bounds.y, bounds.width, bounds.height, index);
+    }
+
+    void Update(IntRectangle bounds, unsigned int index, T value)
+    {
+        Update(bounds.x, bounds.y, bounds.width, bounds.height, index, value);
     }
 
     unsigned int Add(int x, int y, int w, int h, T value)
@@ -269,10 +266,15 @@ public:
             h,
             value
         };
-        unsigned int index = storage.Add(value);
+        unsigned int index = storage.Add(dat);
         Fill(x, y, w, h, index);
 
         return index;
+    }
+
+    unsigned int Add(IntRectangle bounds, T value)
+    {
+        return Add(bounds.x, bounds.y, bounds.width, bounds.height, value);
     }
 
     void Remove(unsigned int index)
@@ -280,7 +282,7 @@ public:
         Data *data = storage.Get(index);
         if(!data) return;
         Erase(data->x, data->y, data->w, data->h, index);
-        storage.Remove(data);
+        storage.Remove(index);
     }
 
     void Fill(int X, int Y, int W, int H, unsigned int index)
@@ -289,15 +291,14 @@ public:
         Y = Y / cellSize;
         W = W / cellSize;
         H = H / cellSize;
+        if(W == 0) W = 1;
+        if(H == 0) H = 1;
         for(int x = X; x < X + W; x++)
         {
             for(int y = Y; y < Y + H; y++)
             {
                 auto p = Position(x, y);
-                if(map.count(p) > 0)
-                {
-                    map[p].insert(index);
-                }
+                map[p].insert(index);
             }
         }
     }
@@ -308,6 +309,8 @@ public:
         Y = Y / cellSize;
         W = W / cellSize;
         H = H / cellSize;
+        if(W == 0) W = 1;
+        if(H == 0) H = 1;
         for(int x = X; x < X + W; x++)
         {
             for(int y = Y; y < Y + H; y++)
