@@ -5,6 +5,7 @@
 #include <raylib.h>
 
 #include "utils/math.h"
+#include "utils/timekeep.h"
 
 bool RenderQueueSorted2D::compareByZ(const std::weak_ptr<GeoObject> a, const std::weak_ptr<GeoObject> b)
 {
@@ -17,17 +18,11 @@ bool RenderQueueSorted2D::compareByZ(const std::weak_ptr<GeoObject> a, const std
 
 void RenderQueueSorted2D::PreRender()
 {
+    Timekeep::ScopeTimer timer = Timekeep::ScopeTimer("RQVS2D PRE");
+
     if(!std::is_sorted(objects.begin(), objects.end(), compareByZ)) std::sort(objects.begin(), objects.end(), compareByZ);
 
-    const Vector2 pos = GetScreenToWorld2D(Vector2Zero(), *camera);
-    const Vector2 size = GetScreenToWorld2D(Vector2{(float)GetScreenWidth(), (float)GetScreenHeight()}, *camera);
-    const Rectangle cameraBoundsWorld =
-    {
-        pos.x,
-        pos.y,
-        size.x,
-        size.y
-    };
+    const Rectangle cameraBoundsWorld = GetCameraBounds(*camera);
 
     for(auto& obj : objects)
     {

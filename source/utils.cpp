@@ -8,33 +8,48 @@
 #include <raymath.h>
 #include "utils/timekeep.h"
 
-Timekeep::Timers GLOBALTIMERS;
-Timekeep::Timers SMOOTHGLOBALTIMERS;
+std::map<std::string, float> frameTimers;
+std::map<std::string, float> lastFrameTimers;
 
-Timekeep::Timers* Timekeep::GetGlobalTimers()
+void Timekeep::AddTimerForFrame(std::string name, float value)
 {
-    return &GLOBALTIMERS;
+    if(frameTimers.count(name) == 1)
+    {
+        std::string newname;
+        int count = 1;
+        int offset = 0;
+        while(count != 0)
+        {
+            offset++;
+            newname = name + std::to_string(offset);
+            count = frameTimers.count(newname);
+        }
+        name = newname;
+    }
+    frameTimers[name] = value;
 }
 
-void Timekeep::DrawTimers()
+void Timekeep::DrawTimers(const int posX, const int posY, const int size)
 {
     const float step = 0.24f * GetFrameTime();
-    SMOOTHGLOBALTIMERS.rendertime = Lerp(SMOOTHGLOBALTIMERS.rendertime, GLOBALTIMERS.rendertime, step);
-    SMOOTHGLOBALTIMERS.rq1draw = Lerp(SMOOTHGLOBALTIMERS.rq1draw, GLOBALTIMERS.rq1draw, step);
-    SMOOTHGLOBALTIMERS.rq1pre = Lerp(SMOOTHGLOBALTIMERS.rq1pre, GLOBALTIMERS.rq1pre, step);
-    SMOOTHGLOBALTIMERS.rq1pre2 = Lerp(SMOOTHGLOBALTIMERS.rq1pre2, GLOBALTIMERS.rq1pre2, step);
-    SMOOTHGLOBALTIMERS.rq1post = Lerp(SMOOTHGLOBALTIMERS.rq1post, GLOBALTIMERS.rq1post, step);
-    SMOOTHGLOBALTIMERS.rq1time = Lerp(SMOOTHGLOBALTIMERS.rq1time, GLOBALTIMERS.rq1time, step);
-    SMOOTHGLOBALTIMERS.updatetime = Lerp(SMOOTHGLOBALTIMERS.updatetime, GLOBALTIMERS.updatetime, step);
 
+    const int rowSize = size + 4;
+    int row = 0;
+    for(auto& [name, value] : frameTimers)
+    {
+        if(lastFrameTimers.count(name))
+        {
+            value = Lerp(lastFrameTimers[name], value, step);
+        }
 
-    DrawText(TextFormat("UPDATE:        %f", SMOOTHGLOBALTIMERS.updatetime), 20, 20, 16, GREEN);
-    DrawText(TextFormat("RENDER:        %f", SMOOTHGLOBALTIMERS.rendertime), 20, 40, 16, GREEN);
-    DrawText(TextFormat("RQ1 TOTAL:     %f", SMOOTHGLOBALTIMERS.rq1time), 20, 60, 16, GREEN);
-    DrawText(TextFormat("RQ1 LIST:      %f", SMOOTHGLOBALTIMERS.rq1pre), 20, 80, 16, GREEN);
-    DrawText(TextFormat("RQ1 PRE:       %f", SMOOTHGLOBALTIMERS.rq1pre2), 20, 100, 16, GREEN);
-    DrawText(TextFormat("RQ1 DRAW:      %f", SMOOTHGLOBALTIMERS.rq1draw), 20, 120, 16, GREEN);
-    DrawText(TextFormat("RQ1 POST:      %f", SMOOTHGLOBALTIMERS.rq1post), 20, 140, 16, GREEN);
+        DrawText(TextFormat("%s : %f", name.c_str(), value), posX, posY + (rowSize * row), size, GREEN);
+        row++;
+    }
+
+    lastFrameTimers.clear();
+    lastFrameTimers = frameTimers;
+    frameTimers.clear();
+
 }
 
 

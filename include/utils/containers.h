@@ -21,6 +21,10 @@ private:
     std::vector<Data> vector;
 
 public:
+    std::vector<Data>& GetVector()
+    {
+        return vector;
+    }
     std::map<int, T*> GetAll()
     {
         std::map<int, T*> out;
@@ -91,8 +95,9 @@ public:
     using Position = std::pair<int, int>;
 private:
     std::map<Position, std::set<unsigned int>> map;
+public:
     PoolVector<Data> storage;
-
+private:
     std::vector<T*> Get(std::set<unsigned int> idxes)
     {
         std::vector<T*> out;

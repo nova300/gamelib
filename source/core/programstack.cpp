@@ -5,6 +5,7 @@
 #include <iostream>
 #include <objects/commandproc.h>
 #include "objects/console.h"
+#include "utils/timekeep.h"
 
 bool ProgramStack::Stop()
 {
@@ -97,6 +98,7 @@ void ProgramStack::Switch(Program *program)
 
 void ProgramStack::Update(float deltaTime)
 {
+    Timekeep::ScopeTimer timer = Timekeep::ScopeTimer("PS UPDATE");
     if(programStack.empty()) return;
 
     if (state != FADEOUT || state != STOP) // dont update if fading out
@@ -119,6 +121,7 @@ void ProgramStack::Update(float deltaTime)
 
 void ProgramStack::Render()
 {
+    Timekeep::ScopeTimer timer = Timekeep::ScopeTimer("PS RENDER");
     if(programStack.empty())
     {
         if(state == STOP) stop = true;

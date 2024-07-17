@@ -32,21 +32,14 @@ int main(void)
     GuiLoadStyleDefault();
     GuiLoadStyle("candy_ts.rgs");
 
-    auto timers = Timekeep::GetGlobalTimers();
-
 
     while(!WindowShouldClose() && !ps1.Stop())
     {
-        timers->updatetime = GetTime();
         ps1.Update(GetFrameTime());
-        timers->updatetime = GetTime() - timers->updatetime;
 
-        float renderTime = GetTime();
         BeginDrawing();
             ps1.Render();
         EndDrawing();
-        renderTime = GetTime() - renderTime;
-        timers->rendertime = renderTime;
     }
 
     ps1.Clear();
@@ -119,8 +112,8 @@ void TestProgram::Init()
 
     auto tileRoot = root.AddChild().lock();
 
-    const int tileAmount = 500;
-    const int tileRadius = 1000;
+    const int tileAmount = 20000;
+    const int tileRadius = 5000;
 
     for(int i = 0; i < tileAmount; i++)
     {
@@ -133,7 +126,6 @@ void TestProgram::Init()
         sprite->SetColor(GetRandomColor());
         tiles.push_back(tile);
     }
-
 
 }
 
@@ -248,18 +240,15 @@ RenderQueue* TestProgram::GetRenderQueue(int index)
 void TestProgram::Render()
 {
     ClearBackground(DARKBLUE);
-    float rqtime = GetTime();
     rq.DrawRender();
-    rqtime = GetTime() - rqtime;
-    Timekeep::GetGlobalTimers()->rq1time = rqtime;
     
-    Timekeep::DrawTimers();
+    Timekeep::DrawTimers(20, 20, 16);
 
     //DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)-canvasheight}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)canvasheight}, 50, 50) , Vector2Zero(), 0.0f, WHITE);
     wm.DrawRender();
 
     BeginMode2D(camera);
-    DrawRectangleLines(rq.renderBounds.x, rq.renderBounds.y, rq.renderBounds.width, rq.renderBounds.height, RED);
+    //DrawRectangleLines(rq.renderBounds.x, rq.renderBounds.y, rq.renderBounds.width, rq.renderBounds.height, RED);
     //DrawRectangleLines(camBounds.x, camBounds.y, camBounds.width, camBounds.height, GREEN);
     //DrawRectangleLinesEx(camBounds, 5.0f, BLUE);
     EndMode2D();

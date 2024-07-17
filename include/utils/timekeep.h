@@ -1,20 +1,51 @@
 #pragma once
+#include <raylib.h>
+#include <string>
 
 namespace Timekeep
 {
-    struct Timers
+    void AddTimerForFrame(std::string name, float time);
+    void DrawTimers(const int posX, const int posY, const int size);
+
+    class Timer
     {
-        float rendertime;
-        float updatetime;
-        float rq1time;
-        float rq1pre;
-        float rq1pre2;
-        float rq1draw;
-        float rq1post;
+    private:
+        float timer = 0.0f;
+        std::string name;
+
+    public:
+        Timer(std::string NAME)
+        {
+            name = NAME;
+        }
+        void Begin()
+        {
+            timer = GetTime();
+        }
+        void End()
+        {
+            timer = GetTime() - timer;
+            AddTimerForFrame(name, timer);
+        }
     };
 
-    Timers* GetGlobalTimers();
+    class ScopeTimer
+    {
+    private:
+        float timer = 0.0f;
+        std::string name;
+    public:
+        ScopeTimer(std::string NAME)
+        {
+            name = NAME;
+            timer = GetTime();
+        }
+        ~ScopeTimer()
+        {
+            timer = GetTime() - timer;
+            AddTimerForFrame(name, timer);
+        }
+    };
 
-    void DrawTimers();
     
 };

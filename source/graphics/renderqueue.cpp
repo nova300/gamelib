@@ -6,6 +6,8 @@
 void RenderQueueVector::DrawRender()
 {
     PreRender();
+	Timekeep::Timer timer = Timekeep::Timer("RQV TOTAL");
+	timer.Begin();
     for(std::vector<std::weak_ptr<GeoObject>>::iterator it = objects.begin(); it != objects.end();)
     {
 	    if(it->expired())
@@ -19,6 +21,7 @@ void RenderQueueVector::DrawRender()
 			it++;
 	    }
     }
+	timer.End();
     PostRender();
 }
 
@@ -45,25 +48,36 @@ void RenderQueueVector::RemoveRender(std::shared_ptr<GeoObject> obj)
 
 void RenderQueueMap2D::DrawRender()
 {
-	auto timers = Timekeep::GetGlobalTimers();
-	timers->rq1pre = GetTime();
-	auto active = objects.GetAllActive();
-	for(const auto& [index, o] : active)
+	Timekeep::Timer timer1 = Timekeep::Timer("RQM2D GET");
+	Timekeep::Timer timer2 = Timekeep::Timer("RQM2D LIST");
+	Timekeep::Timer timer3 = Timekeep::Timer("RQM2D PRE");
+	Timekeep::Timer timer4 = Timekeep::Timer("RQM2D DRAW");
+	Timekeep::ScopeTimer timer5 = Timekeep::ScopeTimer("RQM2D TOTAL");
+	Timekeep::Timer timer6 = Timekeep::Timer("RQM2D UPDATE");
+
+	timer1.Begin();
+	auto& active = objects.storage.GetVector();
+	timer1.End();
+	timer6.Begin();
+	for(const auto& d : active)
 	{
-		if(!o->object.expired())
+		if(d.index < 0) continue;
+		if(!d.value.value.object.expired())
 		{
-			IntRectangle bounds = o->object.lock()->GetPos()->world.Rect();
-			objects.Update(bounds, index);
+			IntRectangle bounds = d.value.value.object.lock()->GetPos()->world.Rect();
+			objects.Update(bounds, d.index);
 		}
 	}
+	timer6.End();
+	timer2.Begin();
 	frameList.clear();
 	PreListGen();
 	frameList = objects.Get(renderBounds);
-	timers->rq1pre = GetTime() - timers->rq1pre;
-	timers->rq1pre2 = GetTime();
+	timer2.End();
+	timer3.Begin();
     PreRender();
-	timers->rq1pre2 = GetTime() - timers->rq1pre2;
-	timers->rq1draw = GetTime();
+	timer3.End();
+	timer4.Begin();
     for(auto n : frameList)
     {
 		auto ptr = n->object.lock();
@@ -72,10 +86,8 @@ void RenderQueueMap2D::DrawRender()
 			if(ptr->GetVisibility()) ptr->Render();
 	    }
     }
-	timers->rq1draw = GetTime() - timers->rq1draw;
-	timers->rq1post = GetTime();
+	timer4.End();
     PostRender();
-	timers->rq1post = GetTime() - timers->rq1post;
 }
 
 void RenderQueueMap2D::AddRender(std::shared_ptr<GeoObject> obj)
