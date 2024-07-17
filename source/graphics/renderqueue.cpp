@@ -58,6 +58,7 @@ void RenderQueueMap2D::DrawRender()
 	timer1.Begin();
 	auto& active = objects.storage.GetVector();
 	timer1.End();
+
 	timer6.Begin();
 	for(const auto& d : active)
 	{
@@ -69,14 +70,17 @@ void RenderQueueMap2D::DrawRender()
 		}
 	}
 	timer6.End();
+
 	timer2.Begin();
 	frameList.clear();
 	PreListGen();
 	frameList = objects.Get(renderBounds);
 	timer2.End();
+
 	timer3.Begin();
     PreRender();
 	timer3.End();
+
 	timer4.Begin();
     for(auto n : frameList)
     {
@@ -87,6 +91,7 @@ void RenderQueueMap2D::DrawRender()
 	    }
     }
 	timer4.End();
+	
     PostRender();
 }
 

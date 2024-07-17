@@ -55,8 +55,12 @@ void Timekeep::DrawTimers(const int posX, const int posY, const int size)
 
 Rectangle GetCameraBounds(const Camera2D camera, const float offset, const float width, const float height)
 {
-    Vector2 origin = Vector2AddValue(Vector2Subtract(camera.target, camera.offset), offset);
+     
+    //Vector2 origin = Vector2AddValue(Vector2Multiply(Vector2Subtract(camera.target, camera.offset), Vector2{camera.zoom, camera.zoom}), offset);
     Vector2 extent = Vector2SubtractValue(Vector2{width / camera.zoom, height / camera.zoom}, offset * 2);
+
+    Vector2 origin = Vector2AddValue(GetScreenToWorld2D(Vector2Zero(), camera), offset);
+    //Vector2 extent = Vector2SubtractValue(GetScreenToWorld2D(Vector2{width, height}, camera), offset * 2); 
 
     auto camBounds = Rectangle{
         origin.x,

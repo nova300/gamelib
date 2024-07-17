@@ -147,6 +147,8 @@ void TestProgram::Update(float deltaTime)
     camera.target = player.get()->position.world.Vec2();
     camera.offset = Vector2{GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 
+    camera.zoom += ((float)GetMouseWheelMove()*0.05f);
+
     if(IsKeyPressed(KEY_F1))
     {
         GetStack()->Push(new Terminal(new DebugConsole()));
@@ -248,7 +250,7 @@ void TestProgram::Render()
     wm.DrawRender();
 
     BeginMode2D(camera);
-    //DrawRectangleLines(rq.renderBounds.x, rq.renderBounds.y, rq.renderBounds.width, rq.renderBounds.height, RED);
+    DrawRectangleLines(rq.renderBounds.x, rq.renderBounds.y, rq.renderBounds.width, rq.renderBounds.height, RED);
     //DrawRectangleLines(camBounds.x, camBounds.y, camBounds.width, camBounds.height, GREEN);
     //DrawRectangleLinesEx(camBounds, 5.0f, BLUE);
     EndMode2D();
