@@ -112,7 +112,7 @@ void TestProgram::Init()
 
     auto tileRoot = root.AddChild().lock();
 
-    const int tileAmount = 20000;
+    /*const int tileAmount = 20000;
     const int tileRadius = 5000;
 
     for(int i = 0; i < tileAmount; i++)
@@ -125,7 +125,28 @@ void TestProgram::Init()
         auto sprite = tile->AddBehaviour<ColorRectangle>().lock();
         sprite->SetColor(GetRandomColor());
         tiles.push_back(tile);
-    }
+    }*/
+
+
+   const int width = 500;
+   const int height = 500;
+
+   const int tilesize = 16;
+
+   for(int x = 0; x < width; x++)
+   {
+        for(int y = 0; y < height; y++)
+        {
+            auto tile = tileRoot->AddChild().lock();
+            tile->position.local.position.x = x * tilesize;
+            tile->position.local.position.y = y * tilesize;
+            tile->position.local.size.x = tilesize;
+            tile->position.local.size.y = tilesize;
+            auto sprite = tile->AddBehaviour<ColorRectangle>().lock();
+            sprite->SetColor(GetRandomColor());
+            tiles.push_back(tile);
+        }
+   }
 
 }
 

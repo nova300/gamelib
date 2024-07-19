@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <string>
 #include <set>
+#include <deque>
 
 #include "utils/types.h"
 
@@ -19,6 +20,7 @@ private:
     };
 
     std::vector<Data> vector;
+    std::deque<int> freeIndicies;
 
 public:
     std::vector<Data>& GetVector()
@@ -49,13 +51,28 @@ public:
 
     unsigned int Add(T value)
     {
-        for (int i = 0; i < vector.size() ; i++)
+        /*for (int i = 0; i < vector.size() ; i++)
         {
             if(vector[i].index != i)
             {
                 vector[i].index = i;
                 vector[i].value = value;
                 return i;
+            }
+        }*/
+
+        if(!freeIndicies.empty())
+        {
+            int index = freeIndicies.front();
+            freeIndicies.pop_front();
+            if(index < vector.size())
+            {
+                if(vector[index].index != index)
+                {
+                    vector[index].index = index;
+                    vector[index].value = value;
+                    return index;
+                }
             }
         }
 
@@ -75,7 +92,9 @@ public:
     void Remove(unsigned int index)
     {
         if(index <= vector.size()) return;
-        vector[index].index = -1;  
+        if(vector[index].index != index) return;
+        vector[index].index = -1;
+        freeIndicies.push_back(index);
     }
 
 };
