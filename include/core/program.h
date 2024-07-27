@@ -11,17 +11,6 @@
 
 #include <memory>
 
-enum RenderQueueTypes
-{
-    RQ_NULL,
-    RQ_SPRITES,
-    RQ_VIRTUAL,
-    RQ_3D,
-    RQ_UI,
-    RQ_WINDOWS,
-    RQ_CUSTOM
-};
-
 class ProgramStack;
 
 class Program

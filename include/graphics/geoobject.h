@@ -7,11 +7,38 @@
 #include "graphics.h"
 #include "core/position.h"
 
+enum RenderQueueTypes
+{
+    RQ_NULL,
+    RQ_SPRITES,
+    RQ_TILES,
+    RQ_VIRTUAL,
+    RQ_3D,
+    RQ_UI,
+    RQ_WINDOWS,
+    RQ_CUSTOM
+};
+
 class GeoObject
 {
 private:
     bool visible = true;
+    int rq_index = RQ_NULL;
+private:
+    virtual int GetDefaultRenderQueue()
+    {
+        return RQ_NULL;
+    }
 public:
+    virtual void SetRenderQueue(int index)
+    {
+        rq_index = index;
+    }
+    virtual int GetRenderQueueIndex()
+    {
+        if(rq_index == RQ_NULL) return GetDefaultRenderQueue();
+        return rq_index;
+    }
     virtual void Render() = 0;
     virtual void OnMouseInputActive(Vector2 mousePos) {};
     virtual bool MouseInput(Vector2 mousePos)

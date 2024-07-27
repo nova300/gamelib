@@ -36,6 +36,12 @@ public:
 
     WindowManager* windowManager = nullptr;
 
+protected:
+    virtual int GetDefaultRenderQueue() override
+    {
+        return RQ_WINDOWS;
+    }
+
 };
 
 //template for rguilayout export template

@@ -6,7 +6,7 @@
 
 void Sprite::Init()
 {
-    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(RQ_SPRITES);
+    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(GetRenderQueueIndex());
     rq->AddRender(GetObject()->GetBehaviour<Sprite>().lock());
 }
 
@@ -60,7 +60,7 @@ void Sprite::Load(Texture2D tex)
 
 void ColorRectangle::Init()
 {
-    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(RQ_SPRITES);
+    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(GetRenderQueueIndex());
     rq->AddRender(GetObject()->GetBehaviour<ColorRectangle>().lock());
 }
 
@@ -72,7 +72,7 @@ void ColorRectangle::Render()
 
 void ColorCircle::Init()
 {
-    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(RQ_SPRITES);
+    RenderQueue* rq = GetObject()->GetProgram()->GetRenderQueue(GetRenderQueueIndex());
     rq->AddRender(GetObject()->GetBehaviour<ColorCircle>().lock());
 }
 

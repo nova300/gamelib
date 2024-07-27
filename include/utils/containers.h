@@ -182,9 +182,9 @@ public:
         W = W / cellSize;
         H = H / cellSize;
         std::set<unsigned int> idxes;
-        for(int x = X - 1; x <= X + W; x++)
+        for(int x = X - 1; x <= X + W + 1; x++)
         {
-            for(int y = Y - 1; y <= Y + H; y++)
+            for(int y = Y - 1; y <= Y + H + 1; y++)
             {
                 auto p = Position(x, y);
                 if (map.count(p) > 0)
@@ -216,9 +216,9 @@ public:
         if(H == 0) H = 1;
         if (data)
         {
-            for (int x = X - 1; x <= X + W; x++)
+            for (int x = X - 1; x <= X + W + 1; x++)
             {
-                for (int y = Y - 1; y <= Y + H; y++)
+                for (int y = Y - 1; y <= Y + H + 1; y++)
                 {
                     auto p = Position(x, y);
                     if (map.count(p) > 0)

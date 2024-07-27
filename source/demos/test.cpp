@@ -95,6 +95,18 @@ void TestProgram::Init()
 
     player->AddBehaviour<PlayerMovement>();
 
+
+    testrec = player->AddChild().lock();
+
+    testrec->position.local.position.x = -40.0f;
+    testrec->position.local.position.y = -36.0f;
+    testrec->position.local.size.x = 16;
+    testrec->position.local.size.y = 16;
+
+    auto tsprite = testrec->AddBehaviour<ColorRectangle>().lock();
+
+    tsprite->SetColor(BLUE);
+
     camera = {0};
 
     camera.zoom = 1;
@@ -128,10 +140,10 @@ void TestProgram::Init()
     }*/
 
 
-   const int width = 500;
-   const int height = 500;
+   const int width = 100;
+   const int height = 100;
 
-   const int tilesize = 16;
+   const int tilesize = 32;
 
    for(int x = 0; x < width; x++)
    {
@@ -143,6 +155,7 @@ void TestProgram::Init()
             tile->position.local.size.x = tilesize;
             tile->position.local.size.y = tilesize;
             auto sprite = tile->AddBehaviour<ColorRectangle>().lock();
+            sprite->SetRenderQueue(RQ_TILES);
             sprite->SetColor(GetRandomColor());
             tiles.push_back(tile);
         }
@@ -164,6 +177,10 @@ void TestProgram::Update(float deltaTime)
 {
     wm.MouseInput(GetMousePosition());
     //UpdateCameraPlayerBoundsPush(&camera, player.get(), GetScreenWidth(), GetScreenHeight());
+
+
+    testrec->position.local.position.x = sin(GetTime()) * 100.0f;
+    testrec->position.local.position.y = cos(GetTime()) * 100.0f;
 
     camera.target = player.get()->position.world.Vec2();
     camera.offset = Vector2{GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
@@ -254,8 +271,11 @@ RenderQueue* TestProgram::GetRenderQueue(int index)
     case RQ_WINDOWS:
         return &wm;
     
-    default:
-        return &rq;
+    case RQ_SPRITES:
+        return &spriterq;
+    
+    case RQ_TILES:
+        return &tilerq;
     }
     
 }
@@ -263,15 +283,27 @@ RenderQueue* TestProgram::GetRenderQueue(int index)
 void TestProgram::Render()
 {
     ClearBackground(DARKBLUE);
-    rq.DrawRender();
+    tilerq.DrawRender();
+    spriterq.DrawRender();
     
     Timekeep::DrawTimers(20, 20, 16);
 
     //DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)-canvasheight}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)canvasheight}, 50, 50) , Vector2Zero(), 0.0f, WHITE);
     wm.DrawRender();
 
+    auto& playerbounds3d = player->GetBounds();
+
+    Rectangle playerbounds = Rectangle
+    {
+        playerbounds3d.min.x,
+        playerbounds3d.min.y,
+        playerbounds3d.max.x - playerbounds3d.min.x,
+        playerbounds3d.max.y - playerbounds3d.min.y
+    };
+
     BeginMode2D(camera);
-    DrawRectangleLines(rq.renderBounds.x, rq.renderBounds.y, rq.renderBounds.width, rq.renderBounds.height, RED);
+    DrawRectangleLines(spriterq.renderBounds.x, spriterq.renderBounds.y, spriterq.renderBounds.width, spriterq.renderBounds.height, RED);
+    DrawRectangleLinesEx(playerbounds, 5.0f, BLUE);
     //DrawRectangleLines(camBounds.x, camBounds.y, camBounds.width, camBounds.height, GREEN);
     //DrawRectangleLinesEx(camBounds, 5.0f, BLUE);
     EndMode2D();

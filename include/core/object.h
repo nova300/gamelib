@@ -52,6 +52,9 @@ protected:
     virtual void PostUpdateInternal(float deltaTime);
     //virtual void RenderInternal();
     void UpdateWorldPos(void);
+    void UpdateBoundingBox(void);
+
+    BoundingBox bounds;
 
     //behaviour data
     std::vector<std::shared_ptr<Behaviour>> behaviours;
@@ -69,6 +72,10 @@ public:
     Program* GetProgram()
     {
         return program;
+    }
+    const BoundingBox& GetBounds()
+    {
+        return bounds;
     }
 };
 

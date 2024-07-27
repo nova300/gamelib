@@ -29,6 +29,11 @@ private:
     Texture2D unmanagedTexture;
     bool managed = true;
     Rectangle src;
+protected:
+    virtual int GetDefaultRenderQueue() override
+    {
+        return RQ_SPRITES;
+    }
 };
 
 
@@ -49,6 +54,10 @@ public:
     {
         color = COLOR;
     }
+    virtual int GetDefaultRenderQueue() override
+    {
+        return RQ_SPRITES;
+    }
 };
 
 class ColorCircle : public Behaviour, public GeoObject
@@ -67,5 +76,9 @@ public:
     void SetColor(Color COLOR)
     {
         color = COLOR;
+    }
+    virtual int GetDefaultRenderQueue() override
+    {
+        return RQ_SPRITES;
     }
 };

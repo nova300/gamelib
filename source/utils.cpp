@@ -42,7 +42,7 @@ void Timekeep::DrawTimers(const int posX, const int posY, const int size)
             value = Lerp(lastFrameTimers[name], value, step);
         }
 
-        DrawText(TextFormat("%s : %f", name.c_str(), value), posX, posY + (rowSize * row), size, GREEN);
+        DrawText(TextFormat("%s : %f", name.c_str(), value * 1000), posX, posY + (rowSize * row), size, GREEN);
         row++;
     }
 

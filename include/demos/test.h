@@ -36,9 +36,11 @@ public:
     std::vector<std::shared_ptr<Object>> tiles;
     
     std::shared_ptr<Object> player;
+    std::shared_ptr<Object> testrec;
     std::shared_ptr<Object> map;
     std::shared_ptr<Object> window1;
     Camera2D camera;
-    RenderQueueSortedMap2D rq = RenderQueueSortedMap2D(&camera);
+    RenderQueueSortedMap2D spriterq = RenderQueueSortedMap2D(&camera);
+    RenderQueueSortedMap2D tilerq = RenderQueueSortedMap2D(&camera);
     WindowManager wm;
 };

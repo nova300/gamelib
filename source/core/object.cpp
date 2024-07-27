@@ -71,6 +71,26 @@ void Object::UpdateWorldPos()
     }
 }
 
+void Object::UpdateBoundingBox()
+{
+    bounds.min = this->position.world.position;
+    bounds.max = Vector3Multiply(Vector3Add(bounds.min, this->position.world.size), this->position.world.scale);
+
+    for(auto& c : childObjects)
+    {
+        c->UpdateBoundingBox();
+        auto& cbounds = c->GetBounds();
+        if(cbounds.min.x < bounds.min.x) bounds.min.x = cbounds.min.x;
+        if(cbounds.min.y < bounds.min.y) bounds.min.y = cbounds.min.y;
+        if(cbounds.min.z < bounds.min.z) bounds.min.z = cbounds.min.z;
+
+        if(cbounds.max.x > bounds.max.x) bounds.max.x = cbounds.max.x;
+        if(cbounds.max.y > bounds.max.y) bounds.max.y = cbounds.max.y;
+        if(cbounds.max.z > bounds.max.z) bounds.max.z = cbounds.max.z;
+
+    }
+}
+
 void Object::UpdateInternal(float deltaTime)
 {
     UpdateWorldPos();
@@ -110,6 +130,7 @@ void Object::UpdateInternal(float deltaTime)
     {
         b->UpdateInternal(deltaTime);
     }
+    UpdateBoundingBox();
 }
 
 void Object::PostUpdateInternal(float deltaTime)
