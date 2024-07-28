@@ -41,6 +41,6 @@ public:
     std::shared_ptr<Object> window1;
     Camera2D camera;
     RenderQueueSortedMap2D spriterq = RenderQueueSortedMap2D(&camera);
-    RenderQueueSortedMap2D tilerq = RenderQueueSortedMap2D(&camera);
+    RenderQueueMap2DCam tilerq = RenderQueueMap2DCam(&camera);
     WindowManager wm;
 };

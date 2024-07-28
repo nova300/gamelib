@@ -57,3 +57,13 @@ public:
     std::map<GeoObject*, int> indicies;
     std::vector<Node*> frameList;
 };
+
+class RenderQueueMap2DCam : public RenderQueueMap2D
+{
+public:
+    RenderQueueMap2DCam(Camera2D* CAM) : camera(CAM) {};
+    void PreListGen() override;
+    void PreRender() override;
+    void PostRender() override;
+    Camera2D* camera = nullptr;
+};

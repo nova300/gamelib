@@ -112,13 +112,13 @@ public:
         T value;
     };
     
-    //using Position = std::pair<int, int>;
+    using Position = std::pair<int, int>;
 private:
-    std::map<long, std::unordered_set<unsigned int>> map;
-    long GetPosHash(const short x, const short y)
+    std::map<Position, std::unordered_set<unsigned int>> map;
+    /*long GetPosHash(const short x, const short y)
     {
         return x<<16 + y;
-    }
+    }*/
 public:
     PoolVector<Data> storage;
 private:
@@ -168,7 +168,7 @@ public:
     {
         x = x / cellSize;
         y = y / cellSize;
-        auto vec = GetPosHash(x, y);
+        auto vec = Position(x, y);
         std::unordered_set<unsigned int> idxes;
         if (map.count(vec) > 0)
         {
@@ -191,7 +191,7 @@ public:
         {
             for(int y = Y - 1; y <= Y + H + 1; y++)
             {
-                auto p = GetPosHash(x, y);
+                auto p = Position(x, y);
                 if (map.count(p) > 0)
                 {
                     for (unsigned int idx : map[p])
@@ -225,7 +225,7 @@ public:
             {
                 for (int y = Y - 1; y <= Y + H + 1; y++)
                 {
-                    auto p = GetPosHash(x, y);
+                    auto p = Position(x, y);
                     if (map.count(p) > 0)
                     {
                         for (unsigned int idx : map[p])
@@ -326,7 +326,7 @@ public:
         {
             for(int y = Y; y < Y + H; y++)
             {
-                auto p = GetPosHash(x, y);
+                auto p = Position(x, y);
                 map[p].insert(index);
             }
         }
@@ -344,7 +344,7 @@ public:
         {
             for(int y = Y; y < Y + H; y++)
             {
-                auto p = GetPosHash(x, y);
+                auto p = Position(x, y);
                 if(map.count(p) > 0)
                 {
                     map[p].erase(index);

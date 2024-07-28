@@ -2,6 +2,7 @@
 #include "core/object.h"
 #include "libgame.h"
 #include "utils/timekeep.h"
+#include "utils/math.h"
 
 void RenderQueueVector::DrawRender()
 {
@@ -118,4 +119,27 @@ void RenderQueueMap2D::RemoveRender(std::shared_ptr<GeoObject> obj)
 
 	objects.Remove(index);
 	indicies.erase(obj.get());
+}
+
+void RenderQueueMap2DCam::PreListGen()
+{
+    if(camera)
+    {
+        const float offset = 0.0f;
+        auto newBounds = GetCameraBounds(*camera, offset);
+        renderBounds = newBounds;
+    }
+    
+}
+
+
+void RenderQueueMap2DCam::PreRender()
+{
+    BeginMode2D(*camera);
+    
+}
+
+void RenderQueueMap2DCam::PostRender()
+{
+    EndMode2D();
 }
