@@ -287,6 +287,7 @@ void TestProgram::Render()
     spriterq.DrawRender();
     
     Timekeep::DrawTimers(20, 20, 16);
+    DrawFPS(GetScreenWidth() - 100, 20);
 
     //DrawTexturePro(canvas.texture, Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)-canvasheight}, ScaleCanvasKeepAspect(Rectangle{0.0f, 0.0f, (float)canvaswidth, (float)canvasheight}, 50, 50) , Vector2Zero(), 0.0f, WHITE);
     wm.DrawRender();

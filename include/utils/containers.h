@@ -6,6 +6,7 @@
 #include <string>
 #include <set>
 #include <deque>
+#include <unordered_set>
 
 #include "utils/types.h"
 
@@ -111,13 +112,17 @@ public:
         T value;
     };
     
-    using Position = std::pair<int, int>;
+    //using Position = std::pair<int, int>;
 private:
-    std::map<Position, std::set<unsigned int>> map;
+    std::map<long, std::unordered_set<unsigned int>> map;
+    long GetPosHash(const short x, const short y)
+    {
+        return x<<16 + y;
+    }
 public:
     PoolVector<Data> storage;
 private:
-    std::vector<T*> Get(std::set<unsigned int> idxes)
+    std::vector<T*> Get(std::unordered_set<unsigned int> idxes)
     {
         std::vector<T*> out;
         for(unsigned int idx : idxes)
@@ -163,8 +168,8 @@ public:
     {
         x = x / cellSize;
         y = y / cellSize;
-        auto vec = std::pair<int, int>(x, y);
-        std::set<unsigned int> idxes;
+        auto vec = GetPosHash(x, y);
+        std::unordered_set<unsigned int> idxes;
         if (map.count(vec) > 0)
         {
             for(unsigned int idx : map[vec])
@@ -181,12 +186,12 @@ public:
         Y = Y / cellSize;
         W = W / cellSize;
         H = H / cellSize;
-        std::set<unsigned int> idxes;
+        std::unordered_set<unsigned int> idxes;
         for(int x = X - 1; x <= X + W + 1; x++)
         {
             for(int y = Y - 1; y <= Y + H + 1; y++)
             {
-                auto p = Position(x, y);
+                auto p = GetPosHash(x, y);
                 if (map.count(p) > 0)
                 {
                     for (unsigned int idx : map[p])
@@ -206,7 +211,7 @@ public:
 
     std::vector<T*> Get(unsigned int index)
     {
-        std::set<unsigned int> indicies;
+        std::unordered_set<unsigned int> indicies;
         Data *data = storage.Get(index);
         const int X = data->x / cellSize;
         const int Y = data->y / cellSize;
@@ -220,7 +225,7 @@ public:
             {
                 for (int y = Y - 1; y <= Y + H + 1; y++)
                 {
-                    auto p = Position(x, y);
+                    auto p = GetPosHash(x, y);
                     if (map.count(p) > 0)
                     {
                         for (unsigned int idx : map[p])
@@ -321,7 +326,7 @@ public:
         {
             for(int y = Y; y < Y + H; y++)
             {
-                auto p = Position(x, y);
+                auto p = GetPosHash(x, y);
                 map[p].insert(index);
             }
         }
@@ -339,7 +344,7 @@ public:
         {
             for(int y = Y; y < Y + H; y++)
             {
-                auto p = Position(x, y);
+                auto p = GetPosHash(x, y);
                 if(map.count(p) > 0)
                 {
                     map[p].erase(index);
